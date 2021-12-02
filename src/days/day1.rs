@@ -1,20 +1,14 @@
+use crate::util::{scan_ascii_to_u32, skip_ascii_whitespace};
+
 type SolverInput = Vec<u32>;
 
 pub fn parse_input(file_bytes: &[u8]) -> SolverInput {
     let mut numbers = vec![];
-    let mut current_number = 0;
-    for byte in file_bytes {
-        match byte {
-            b'\n' => {
-                numbers.push(current_number);
-                current_number = 0;
-            },
-            b'0' ..= b'9' => {
-                current_number *= 10;
-                current_number += (byte - b'0') as u32;
-            },
-            _ => panic!()
-        }
+    let mut subslice = file_bytes;
+    while subslice.len() > 0 {
+        let (number, new_subslice) = scan_ascii_to_u32(subslice);
+        numbers.push(number);
+        subslice = skip_ascii_whitespace(new_subslice);
     }
     return numbers;
 }
