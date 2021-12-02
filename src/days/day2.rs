@@ -1,3 +1,5 @@
+use nom::{bytes::complete::tag, error::{self, make_error}, IResult, branch::alt, sequence::{separated_pair, terminated}, character::complete::{digit1, char}, multi::many1};
+
 use crate::util::*;
 
 type SolverInput = Vec<Command>;
@@ -9,25 +11,28 @@ pub enum Command {
 }
 
 pub fn parse_input(file_bytes: &[u8]) -> SolverInput {
-    let mut commands = vec![];
+    let down_tag = |i| -> IResult<&[u8],_> { tag(b"down")(i) };
+    let forward_tag = |i| -> IResult<&[u8],_> { tag(b"forward")(i) };
+    let up_tag = |i| -> IResult<&[u8],_> { tag(b"up")(i) };
+    let direction_alt = |i| -> IResult<&[u8],_> { alt((up_tag, forward_tag, down_tag))(i) };
+    let line_pair = |i| -> IResult<_, (_, _),_> { separated_pair(direction_alt, tag(b" "), digit1)(i) };
+    let command_parse = |i| -> IResult<&[u8], Command> {
+        let (rest, (direction, value_str))  = line_pair(i)?;
+        if let Some(value) = atoi::atoi(value_str) {
+            Ok((rest, match direction[0] {
+                b'd' => Command::Down(value),
+                b'f' => Command::Forward(value),
+                b'u' => Command::Up(value),
+                _ => unreachable!(),
+            }))
+        } else {
+            Err(nom::Err::Error(make_error(value_str, error::ErrorKind::Digit)))
+        }
+    };
+    let line_parse = |i| -> IResult<&[u8], _> { terminated(command_parse, tag(b"\n"))(i) };
+    let file_parse = |i| -> IResult<&[u8], _> { many1(line_parse)(i) };
 
-    let mut subslice = file_bytes;
-    while subslice.len() > 0 {
-        let character = subslice[0];
-        subslice = skip_ascii_whitespace(skip_to_ascii_whitespace(subslice));
-        let (magnitude, new_subslice) = scan_ascii_to_u32(subslice);
-
-        commands.push(match character {
-            b'd' => Command::Down(magnitude),
-            b'f' => Command::Forward(magnitude),
-            b'u' => Command::Up(magnitude),
-            _ => panic!(),
-        });
-
-        subslice = skip_ascii_whitespace(new_subslice);
-    }
-
-    return commands;
+    return file_parse(file_bytes).map(move |t| t.1).unwrap();
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {
