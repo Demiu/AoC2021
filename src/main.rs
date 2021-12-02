@@ -12,4 +12,5 @@ fn main() {
     let day2in = include_bytes!("../input/2/input.txt");
     let commands = day2::parse_input(day2in);
     println!("Day 2 Part 1: {}", day2::solve_part1(&commands));
+    println!("Day 2 Part 2: {}", day2::solve_part2(&commands));
 }

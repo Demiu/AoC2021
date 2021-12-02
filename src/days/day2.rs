@@ -45,3 +45,20 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     }
     return depth * distance;
 }
+
+pub fn solve_part2(input: &SolverInput) -> u32 {
+    let mut aim = 0;
+    let mut depth = 0;
+    let mut distance = 0;
+    for command in input {
+        match command.0 {
+            Direction::Down => aim += command.1,
+            Direction::Forward => {
+                distance += command.1;
+                depth += aim * command.1;
+            },
+            Direction::Up => aim -= command.1,
+        }
+    }
+    return depth * distance;
+}
