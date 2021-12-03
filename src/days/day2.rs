@@ -1,6 +1,4 @@
-use nom::{bytes::complete::tag, error::{self, make_error}, IResult, branch::alt, sequence::{separated_pair, terminated}, character::complete::{digit1, char}, multi::many1};
-
-use crate::util::*;
+use nom::{bytes::complete::tag, error::{self, make_error}, IResult, branch::alt, sequence::{separated_pair, terminated}, character::complete::digit1, multi::many1};
 
 type SolverInput = Vec<Command>;
 
@@ -11,12 +9,12 @@ pub enum Command {
 }
 
 pub fn parse_input(file_bytes: &[u8]) -> SolverInput {
-    let down_tag = |i| -> IResult<&[u8],_> { tag(b"down")(i) };
-    let forward_tag = |i| -> IResult<&[u8],_> { tag(b"forward")(i) };
-    let up_tag = |i| -> IResult<&[u8],_> { tag(b"up")(i) };
-    let direction_alt = |i| -> IResult<&[u8],_> { alt((up_tag, forward_tag, down_tag))(i) };
-    let line_pair = |i| -> IResult<_, (_, _),_> { separated_pair(direction_alt, tag(b" "), digit1)(i) };
-    let command_parse = |i| -> IResult<&[u8], Command> {
+    let down_literal = |i| { tag(b"down")(i) };
+    let forward_literal = |i|  { tag(b"forward")(i) };
+    let up_literal = |i|  { tag(b"up")(i) };
+    let direction_alternative = |i| { alt((up_literal, forward_literal, down_literal))(i) };
+    let line_pair = |i| { separated_pair(direction_alternative, tag(b" "), digit1)(i) };
+    let command_parse = |i| {
         let (rest, (direction, value_str))  = line_pair(i)?;
         if let Some(value) = atoi::atoi(value_str) {
             Ok((rest, match direction[0] {
@@ -29,7 +27,7 @@ pub fn parse_input(file_bytes: &[u8]) -> SolverInput {
             Err(nom::Err::Error(make_error(value_str, error::ErrorKind::Digit)))
         }
     };
-    let line_parse = |i| -> IResult<&[u8], _> { terminated(command_parse, tag(b"\n"))(i) };
+    let line_parse = |i| { terminated(command_parse, tag(b"\n"))(i) };
     let file_parse = |i| -> IResult<&[u8], _> { many1(line_parse)(i) };
 
     return file_parse(file_bytes).map(move |t| t.1).unwrap();
