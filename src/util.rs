@@ -4,12 +4,12 @@ pub fn scan_ascii_to_u32(text: &[u8]) -> (u32, &[u8]) {
     let mut len = 0;
     for byte in text {
         match byte {
-            b'0' ..= b'9' => {
+            b'0'..=b'9' => {
                 number *= 10;
                 number += (byte - b'0') as u32;
                 len += 1;
-            },
-            _ => break
+            }
+            _ => break,
         }
     }
     return (number, &text[len..]);
