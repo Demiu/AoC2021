@@ -1,6 +1,8 @@
 mod days;
 mod parse;
 
+use std::time::Instant;
+
 use days::*;
 
 fn main() {
@@ -15,7 +17,13 @@ fn main() {
     println!("Day 2 Part 2: {}", day2::solve_part2(&commands));*/
 
     let day3in = include_bytes!("../input/3/bigboy.txt");
+    let t1 = Instant::now();
     let input = day3::parse_input(day3in).expect("Failed to parse input file for day 3");
+    let t2 = Instant::now();
     println!("Day 3 Part 1: {}", day3::solve_part1(&input));
+    let t3 = Instant::now();
     println!("Day 3 Part 2: {}", day3::solve_part2(&input));
+    let t4 = Instant::now();
+
+    println!("{} {} {}", t2.duration_since(t1).as_millis(), t3.duration_since(t2).as_millis(), t4.duration_since(t3).as_millis());
 }

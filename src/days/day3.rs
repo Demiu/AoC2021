@@ -1,10 +1,10 @@
 use anyhow::{anyhow, Result};
 use nom::{bytes::complete::tag, character::complete::digit1, multi::separated_list1};
 
-use crate::parse::parse_u32_radix;
+use crate::parse::parse_u64_radix;
 
 pub struct SolverInput<'a> {
-    lines: Vec<(&'a [u8], u32)>,
+    lines: Vec<(&'a [u8], u64)>,
     line_length: usize,
 }
 
@@ -17,12 +17,12 @@ pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
     separated_list1(tag("\n"), digit1::<_, nom::error::Error<_>>)(file)
         .map_err(move |_| anyhow!("Line parser failed"))
         .map(move |t| {
-            let mut lines: Vec<(&'a [u8], u32)> =
+            let mut lines: Vec<(&'a [u8], u64)> =
                 t.1.into_iter()
                     .map(|line| {
                         (
                             line,
-                            parse_u32_radix::<'a, nom::error::Error<_>>(2)(line)
+                            parse_u64_radix::<'a, nom::error::Error<_>>(2)(line)
                                 .unwrap()
                                 .1,
                         )
@@ -33,7 +33,7 @@ pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
         })
 }
 
-pub fn solve_part1(input: &SolverInput) -> u32 {
+pub fn solve_part1(input: &SolverInput) -> u64 {
     let mut counts = vec![0; input.line_length];
     for line in input.lines.iter().copied() {
         for (i, ch) in line.0.iter().enumerate() {
@@ -59,14 +59,14 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     return gamma * epsilon;
 }
 
-pub fn solve_part2(input: &SolverInput) -> u32 {
-    fn find_new_min_idx(s: &[(&[u8], u32)], min: u32) -> usize {
+pub fn solve_part2(input: &SolverInput) -> u64 {
+    fn find_new_min_idx(s: &[(&[u8], u64)], min: u64) -> usize {
         match s.binary_search_by_key(&min, |t| t.1) {
             Ok(v) => v,
             Err(v) => v,
         }
     }
-    fn find_new_max_idx(s: &[(&[u8], u32)], max: u32) -> usize {
+    fn find_new_max_idx(s: &[(&[u8], u64)], max: u64) -> usize {
         match s.binary_search_by_key(&max, |t| t.1) {
             Ok(v) => v,
             Err(v) => v,
@@ -78,7 +78,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     let (mut oxyminidx, mut oxymaxidx) = (0, input.lines.len());
     let (mut co2minidx, mut co2maxidx) = (0, input.lines.len());
     for position in 0..input.line_length {
-        let left_mask: u32 = !0 << (input.line_length - position);
+        let left_mask = !0 << (input.line_length - position);
         let one_in_pos = 1 << (input.line_length - position - 1);
 
         let oxy_eligible = &input.lines[oxyminidx..oxymaxidx];

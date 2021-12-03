@@ -33,13 +33,13 @@ where
     }
 }
 
-pub fn parse_u32_radix<'a, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], u32, E>
+pub fn parse_u64_radix<'a, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], u64, E>
 where
     E: ParseError<&'a [u8]>,
 {
     map_opt(digit1, move |digits| parse_unsigned_radix(digits, radix))
 }
 
-pub fn parse_u32<'a>(input: &'a [u8]) -> IResult<&'a [u8], u32> {
-    parse_u32_radix(10)(input)
+pub fn parse_u64<'a>(input: &'a [u8]) -> IResult<&'a [u8], u64> {
+    parse_u64_radix(10)(input)
 }
