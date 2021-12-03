@@ -1,16 +1,14 @@
-use crate::util::{scan_ascii_to_u32, skip_ascii_whitespace};
+use anyhow::{anyhow, Result};
+use nom::{bytes::complete::tag, multi::separated_list1};
+
+use crate::parse::parse_u32;
 
 type SolverInput = Vec<u32>;
 
-pub fn parse_input(file_bytes: &[u8]) -> SolverInput {
-    let mut numbers = vec![];
-    let mut subslice = file_bytes;
-    while subslice.len() > 0 {
-        let (number, new_subslice) = scan_ascii_to_u32(subslice);
-        numbers.push(number);
-        subslice = skip_ascii_whitespace(new_subslice);
-    }
-    return numbers;
+pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput> {
+    separated_list1(tag("\n"), parse_u32)(file)
+        .map(move |v| v.1)
+        .map_err(move |_| anyhow!("Parser failed"))
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {

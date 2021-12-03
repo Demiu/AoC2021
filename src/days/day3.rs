@@ -26,10 +26,14 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     while let Some(ch) = it.next() {
         match ch {
             b'0' | b'1' => {
-                if *ch == b'1' { counts[linepos] += 1 };
-                if linepos == 0 { lines += 1 };
+                if *ch == b'1' {
+                    counts[linepos] += 1
+                };
+                if linepos == 0 {
+                    lines += 1
+                };
                 linepos += 1;
-            },
+            }
             b'\n' => linepos = 0,
             _ => unreachable!(),
         }
@@ -40,11 +44,11 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     for count in counts {
         gamma *= 2;
         epsilon *= 2;
-        if count*2 > lines {
+        if count * 2 > lines {
             gamma += 1;
         } else {
             epsilon += 1;
         }
     }
-    return gamma * epsilon; 
+    return gamma * epsilon;
 }
