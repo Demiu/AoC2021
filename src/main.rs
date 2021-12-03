@@ -15,6 +15,6 @@ fn main() {
     println!("Day 2 Part 2: {}", day2::solve_part2(&commands));
 
     let day3in = include_bytes!("../input/3/input.txt");
-    let input = day3::parse_input(day3in).unwrap();
+    let input = day3::parse_input(day3in).expect("Failed to parse input file for day 3");
     println!("Day 3 Part 1: {}", day3::solve_part1(&input));
 }

@@ -19,7 +19,7 @@ where
     let mut index = 0;
     let mut number = 0.into();
     while let Some(value) = input.get(index).copied().and_then(ascii_digit_to_value) {
-        if value > radix {
+        if value >= radix {
             return None;
         }
         number *= radix.into();

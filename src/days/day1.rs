@@ -7,8 +7,8 @@ type SolverInput = Vec<u32>;
 
 pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput> {
     separated_list1(tag("\n"), parse_u32)(file)
-        .map(move |v| v.1)
         .map_err(move |_| anyhow!("Parser failed"))
+        .map(move |t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {

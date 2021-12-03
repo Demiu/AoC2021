@@ -1,4 +1,4 @@
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 
 type SolverInput = Vec<Command>;
 
@@ -16,15 +16,15 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
             b'd' => {
                 index += 7;
                 Command::Down(file[index - 2] - b'0')
-            },
+            }
             b'f' => {
                 index += 10;
                 Command::Forward(file[index - 2] - b'0')
-            },
+            }
             b'u' => {
                 index += 5;
                 Command::Up(file[index - 2] - b'0')
-            },
+            }
             _ => bail!("Starting character doesn't match any possible option"),
         };
         parsed.push(command);
