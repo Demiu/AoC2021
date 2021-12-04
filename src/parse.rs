@@ -47,5 +47,5 @@ where
     U: AddAssign<U> + MulAssign<U>,
     u8: Into<U>,
 {
-    unsigned_parser_radix(10)(input)
+    (unsigned_parser_radix(10))(input)
 }

@@ -4,11 +4,11 @@ use nom::{bytes::complete::tag, multi::separated_list1};
 use crate::parse::parse_unsigned;
 
 pub struct SolverInput {
-    draws: Vec<u8>,
+    draws: Vec<u16>,
     boards: Vec<BingoBoard>,
 }
 
-type Cell = (u8, bool);
+type Cell = (u16, bool);
 
 #[derive(Clone)]
 struct BingoBoard {
@@ -18,7 +18,7 @@ struct BingoBoard {
 
 impl BingoBoard {
     // Returns true if a number was marked
-    fn mark_number(&mut self, number: u8) -> bool {
+    fn mark_number(&mut self, number: u16) -> bool {
         for cell in self.grid.iter_mut() {
             if !cell.1 && cell.0 == number {
                 cell.1 = true;
@@ -95,14 +95,14 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
             n @ b'0'..=b'9' => {
                 let n = n - b'0';
                 if current_num.is_none() {
-                    current_num = Some(n);
+                    current_num = Some(n as u16);
                 } else {
-                    current_num = Some(current_num.unwrap() * 10 + n);
+                    current_num = Some(current_num.unwrap() * 10 + n as u16);
                 }
             }
             b' ' => {
                 if current_num.is_some() {
-                    cells.push((current_num.take().unwrap(), false));
+                    cells.push((current_num.take().unwrap() as u16, false));
                 }
             }
             b'\n' => {
@@ -115,7 +115,7 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
                     cells = vec![];
                 } else {
                     // a line done
-                    cells.push((current_num.take().unwrap(), false));
+                    cells.push((current_num.take().unwrap() as u16, false));
                     if board_len.is_none() {
                         // a (first) line done, set the length, it's the same for every board
                         board_len = Some(cells.len());
