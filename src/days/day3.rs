@@ -97,7 +97,8 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
                     oxyminidx = oxyminidx + find_new_min_idx(oxy_eligible, oxymin);
                 } else {
                     // zero most common
-                    let oxymax = (oxy_eligible[oxy_eligible.len()-1].1 & left_mask) ^ (one_in_pos - 1);
+                    let oxymax =
+                        (oxy_eligible[oxy_eligible.len() - 1].1 & left_mask) ^ (one_in_pos - 1);
                     oxymaxidx = oxyminidx + find_new_max_idx(oxy_eligible, oxymax);
                 }
             }
@@ -119,7 +120,8 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
                     co2minidx = co2minidx + find_new_min_idx(co2_eligible, co2min);
                 } else {
                     // zero least common, or equal
-                    let co2max = (co2_eligible[co2_eligible.len()-1].1 & left_mask) ^ (one_in_pos - 1);
+                    let co2max =
+                        (co2_eligible[co2_eligible.len() - 1].1 & left_mask) ^ (one_in_pos - 1);
                     co2maxidx = co2minidx + find_new_max_idx(co2_eligible, co2max);
                 }
             }
