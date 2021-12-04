@@ -1,12 +1,12 @@
 use anyhow::{anyhow, Result};
 use nom::{bytes::complete::tag, multi::separated_list1};
 
-use crate::parse::parse_u32;
+use crate::parse::parse_unsigned;
 
 type SolverInput = Vec<u32>;
 
 pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput> {
-    separated_list1(tag("\n"), parse_u32)(file)
+    separated_list1(tag("\n"), parse_unsigned)(file)
         .map_err(move |_| anyhow!("Parser failed"))
         .map(move |t| t.1)
 }

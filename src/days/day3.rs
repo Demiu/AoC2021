@@ -1,7 +1,7 @@
 use anyhow::{anyhow, Result};
 use nom::{bytes::complete::tag, character::complete::digit1, multi::separated_list1};
 
-use crate::parse::parse_u32_radix;
+use crate::parse::unsigned_parser_radix;
 
 pub struct SolverInput<'a> {
     lines: Vec<(&'a [u8], u32)>,
@@ -22,7 +22,7 @@ pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
                     .map(|line| {
                         (
                             line,
-                            parse_u32_radix::<'a, nom::error::Error<_>>(2)(line)
+                            unsigned_parser_radix::<'a, _, nom::error::Error<_>>(2)(line)
                                 .unwrap()
                                 .1,
                         )
