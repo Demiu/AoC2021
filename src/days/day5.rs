@@ -346,8 +346,7 @@ fn parse_line(input: &[u8]) -> IResult<&[u8], Line> {
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let mut lines = separated_list1(tag(b"\n"), parse_line)(file)
-        .map_err(|_| anyhow!("Failed parsing lines"))
-        .map(move |t| t.1)?;
+        .map_err(|_| anyhow!("Failed parsing lines"))?.1;
     for line in lines.iter_mut() {
         if let Line::Generic { start, end } = line {
             match (start.x == end.x, start.y == end.y) {
