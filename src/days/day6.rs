@@ -29,3 +29,16 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     }
     lanternfish.iter().sum()
 }
+
+pub fn solve_part2(input: &SolverInput) -> u64 {
+    let mut lanternfish: Vec<_> = input.iter().map(|v| *v as u64).collect();
+    for _ in 0..256 {
+        let expired = lanternfish[0];
+        for i in 0..8 {
+            lanternfish[i] = lanternfish[i+1];
+        }
+        lanternfish[6] += expired;
+        lanternfish[8] = expired;
+    }
+    lanternfish.iter().sum()
+}
