@@ -1,16 +1,19 @@
 use anyhow::{anyhow, Result};
-use nom::{multi::separated_list1, bytes::complete::tag};
+use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;
 
-type SolverInput = Vec<u32>;
+type SolverInput = [u32; TOTAL_CATEGORIES];
 
-// todo make the 9 const
+const CYCLE_LENGTH: usize = 7;
+const NEW_CYCLE_EXTRA: usize = 2;
+const TOTAL_CATEGORIES: usize = CYCLE_LENGTH + NEW_CYCLE_EXTRA;
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let numbers = separated_list1(tag(b","), parse_unsigned::<usize>)(file)
-        .map_err(|_| anyhow!("Failed parsing lines"))?.1;
-    let mut lanternfish = vec![0; 9];
+        .map_err(|_| anyhow!("Failed parsing lines"))?
+        .1;
+    let mut lanternfish = [0; TOTAL_CATEGORIES];
     for fish in numbers {
         lanternfish[fish] += 1;
     }
@@ -18,11 +21,12 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {
-    let mut lanternfish = input.clone();
-    for _ in 0..80 {
+    const DAYS: usize = 80;
+    let mut lanternfish = *input;
+    for _ in 0..DAYS {
         let expired = lanternfish[0];
         for i in 0..8 {
-            lanternfish[i] = lanternfish[i+1];
+            lanternfish[i] = lanternfish[i + 1];
         }
         lanternfish[6] += expired;
         lanternfish[8] = expired;
@@ -31,11 +35,12 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
 }
 
 pub fn solve_part2(input: &SolverInput) -> u64 {
-    let mut lanternfish: Vec<_> = input.iter().map(|v| *v as u64).collect();
-    for _ in 0..256 {
+    const DAYS: usize = 256;
+    let mut lanternfish = input.map(|v| v as u64);
+    for _ in 0..DAYS {
         let expired = lanternfish[0];
         for i in 0..8 {
-            lanternfish[i] = lanternfish[i+1];
+            lanternfish[i] = lanternfish[i + 1];
         }
         lanternfish[6] += expired;
         lanternfish[8] = expired;

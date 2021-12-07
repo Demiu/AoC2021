@@ -66,13 +66,13 @@ impl VerticalLine {
 
 impl DiagonalLineInc {
     fn new(start: Point, length: u32) -> DiagonalLineInc {
-        DiagonalLineInc {start, length}
+        DiagonalLineInc { start, length }
     }
 }
 
 impl DiagonalLineDec {
     fn new(start: Point, length: u32) -> DiagonalLineDec {
-        DiagonalLineDec {start, length}
+        DiagonalLineDec { start, length }
     }
 }
 
@@ -346,13 +346,18 @@ fn parse_line(input: &[u8]) -> IResult<&[u8], Line> {
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let mut lines = separated_list1(tag(b"\n"), parse_line)(file)
-        .map_err(|_| anyhow!("Failed parsing lines"))?.1;
+        .map_err(|_| anyhow!("Failed parsing lines"))?
+        .1;
     for line in lines.iter_mut() {
         if let Line::Generic { start, end } = line {
             match (start.x == end.x, start.y == end.y) {
                 (true, true) => unreachable!("Zero length line"),
-                (false, true) => *line = Horizontal(HorizontalLine::new(make_range(start.x, end.x), end.y)),
-                (true, false) => *line = Vertical(VerticalLine::new(end.x, make_range(start.y, end.y))),
+                (false, true) => {
+                    *line = Horizontal(HorizontalLine::new(make_range(start.x, end.x), end.y))
+                }
+                (true, false) => {
+                    *line = Vertical(VerticalLine::new(end.x, make_range(start.y, end.y)))
+                }
                 _ => {
                     *line = match (start.x < end.x, start.y < end.y) {
                         (true, true) => DecDiagonal(DiagonalLineDec::new(*start, end.x - start.x)),
