@@ -334,17 +334,16 @@ fn range_intersect<Idx: Ord + Copy>(
     }
 }
 
-fn parse_point(input: &[u8]) -> IResult<&[u8], Point> {
-    let (rest, (x, y)) = separated_pair(parse_unsigned, tag(b","), parse_unsigned)(input)?;
-    Ok((rest, Point { x, y }))
-}
-
-fn parse_line(input: &[u8]) -> IResult<&[u8], Line> {
-    let (rest, (start, end)) = separated_pair(parse_point, tag(b" -> "), parse_point)(input)?;
-    Ok((rest, Line::Generic { start, end }))
-}
-
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+    fn parse_point(input: &[u8]) -> IResult<&[u8], Point> {
+        let (rest, (x, y)) = separated_pair(parse_unsigned, tag(b","), parse_unsigned)(input)?;
+        Ok((rest, Point { x, y }))
+    }
+    fn parse_line(input: &[u8]) -> IResult<&[u8], Line> {
+        let (rest, (start, end)) = separated_pair(parse_point, tag(b" -> "), parse_point)(input)?;
+        Ok((rest, Line::Generic { start, end }))
+    }
+
     let mut lines = separated_list1(tag(b"\n"), parse_line)(file)
         .map_err(|_| anyhow!("Failed parsing lines"))?
         .1;

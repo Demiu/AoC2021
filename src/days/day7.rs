@@ -1,5 +1,4 @@
 use anyhow::{anyhow, Result};
-use itertools::sorted;
 use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;
@@ -16,12 +15,11 @@ fn abs_diff(l: u32, r: u32) -> u32 {
 }
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
-    Ok(sorted(
-        separated_list1(tag(b","), parse_unsigned)(file)
-            .map_err(|_| anyhow!("Failed parsing list of crab positions"))?
-            .1,
-    )
-    .collect())
+    let mut numbers = separated_list1(tag(b","), parse_unsigned)(file)
+        .map_err(|_| anyhow!("Failed parsing list of crab positions"))?
+        .1;
+    numbers.sort();
+    Ok(numbers)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {
