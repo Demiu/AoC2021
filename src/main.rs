@@ -48,4 +48,9 @@ fn main() {
     let day9parsed = day9::parse_input(day9in).expect("Failed to parse input file for day 9");
     println!("Day 9 Part 1: {}", day9::solve_part1(&day9parsed));
     println!("Day 9 Part 2: {}", day9::solve_part2(&day9parsed));
+
+    let day10in = include_bytes!("../input/10/input.txt");
+    let day10parsed = day10::parse_input(day10in).expect("Failed to parse input file for day 10");
+    println!("Day 10 Part 1: {}", day10::solve_part1(&day10parsed));
+    println!("Day 10 Part 2: {}", day10::solve_part2(&day10parsed));
 }
