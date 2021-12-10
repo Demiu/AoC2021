@@ -42,7 +42,7 @@ impl BingoBoard {
     fn is_bingo_horizontal(&self) -> bool {
         'line: for y in 0..self.side_len {
             for x in 0..self.side_len {
-                if self[[x, y]].1 == false {
+                if !self[[x, y]].1 {
                     continue 'line;
                 }
             }
@@ -54,7 +54,7 @@ impl BingoBoard {
     fn is_bingo_vertical(&self) -> bool {
         'line: for x in 0..self.side_len {
             for y in 0..self.side_len {
-                if self[[x, y]].1 == false {
+                if !self[[x, y]].1 {
                     continue 'line;
                 }
             }

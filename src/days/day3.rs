@@ -8,7 +8,7 @@ pub struct SolverInput<'a> {
     line_length: usize,
 }
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
+pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let line_length = file
         .iter()
         .copied()
@@ -17,12 +17,12 @@ pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
     separated_list1(tag("\n"), digit1::<_, nom::error::Error<_>>)(file)
         .map_err(move |_| anyhow!("Line parser failed"))
         .map(move |t| {
-            let mut lines: Vec<(&'a [u8], u32)> =
+            let mut lines: Vec<(&[u8], u32)> =
                 t.1.into_iter()
                     .map(|line| {
                         (
                             line,
-                            unsigned_parser_radix::<'a, _, nom::error::Error<_>>(2)(line)
+                            unsigned_parser_radix::<_, nom::error::Error<_>>(2)(line)
                                 .unwrap()
                                 .1,
                         )
@@ -56,7 +56,7 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
             epsilon += 1;
         }
     }
-    return gamma * epsilon;
+    gamma * epsilon
 }
 
 pub fn solve_part2(input: &SolverInput) -> u32 {
@@ -94,7 +94,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
                 if oxy_one_cnt * 2 >= oxy_eligible.len() {
                     // one most common, or equal
                     let oxymin = (oxy_eligible[0].1 & left_mask) ^ one_in_pos;
-                    oxyminidx = oxyminidx + find_new_min_idx(oxy_eligible, oxymin);
+                    oxyminidx += find_new_min_idx(oxy_eligible, oxymin);
                 } else {
                     // zero most common
                     let oxymax =
@@ -117,7 +117,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
                 if co2_one_cnt * 2 < co2_eligible.len() {
                     // one least common
                     let co2min = (co2_eligible[0].1 & left_mask) ^ one_in_pos;
-                    co2minidx = co2minidx + find_new_min_idx(co2_eligible, co2min);
+                    co2minidx += find_new_min_idx(co2_eligible, co2min);
                 } else {
                     // zero least common, or equal
                     let co2max =

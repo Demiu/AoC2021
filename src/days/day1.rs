@@ -3,9 +3,10 @@ use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;
 
-type SolverInput = Vec<u32>;
+type ParserOutput = Vec<u32>;
+type SolverInput = [u32];
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     separated_list1(tag("\n"), parse_unsigned)(file)
         .map_err(move |_| anyhow!("Parser failed"))
         .map(move |t| t.1)
@@ -18,7 +19,7 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
             solution += 1;
         }
     }
-    return solution;
+    solution
 }
 
 pub fn solve_part2(input: &SolverInput) -> u32 {
@@ -30,5 +31,5 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
             solution += 1;
         }
     }
-    return solution;
+    solution
 }

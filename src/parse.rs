@@ -42,7 +42,7 @@ where
     map_opt(digit1, move |digits| parse_unsigned_radix(digits, radix))
 }
 
-pub fn parse_unsigned<'a, U>(input: &'a [u8]) -> IResult<&'a [u8], U>
+pub fn parse_unsigned<U>(input: &[u8]) -> IResult<&[u8], U>
 where
     U: AddAssign<U> + MulAssign<U>,
     u8: Into<U>,

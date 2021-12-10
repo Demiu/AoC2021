@@ -4,7 +4,10 @@ use nom::{
     sequence::separated_pair, IResult,
 };
 
-type SolverInput<'a> = Vec<(Vec<&'a [u8]>, Vec<&'a [u8]>)>;
+type EntryVec<'a> = Vec<&'a [u8]>;
+type LineTuple<'a> = (EntryVec<'a>, EntryVec<'a>);
+type ParserOutput<'a> = Vec<LineTuple<'a>>;
+type SolverInput<'a> = [LineTuple<'a>];
 
 mod segments {
     pub const TOP: u8 = 1 << 0;
@@ -82,11 +85,11 @@ fn resolve_conflict(
     }
 }
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     fn parse_character_sequences(input: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {
         separated_list1(tag(b" "), alpha1)(input)
     }
-    fn parse_entry_line(input: &[u8]) -> IResult<&[u8], (Vec<&[u8]>, Vec<&[u8]>)> {
+    fn parse_entry_line(input: &[u8]) -> IResult<&[u8], LineTuple> {
         separated_pair(
             parse_character_sequences,
             tag(b" | "),

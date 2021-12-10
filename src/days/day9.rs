@@ -4,9 +4,10 @@ use anyhow::Result;
 use itertools::Itertools;
 use nom::{bytes::complete::tag, character::complete::digit1, multi::separated_list1};
 
-type SolverInput<'a> = Vec<&'a [u8]>;
+type ParserOutput<'a> = Vec<&'a [u8]>;
+type SolverInput<'a> = [&'a [u8]];
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     separated_list1::<_, _, _, nom::error::Error<_>, _, _>(tag(b"\n"), digit1)(file)
         .map_err(|_| anyhow::anyhow!("Failed parsing lines"))
         .map(|t| t.1)
@@ -18,13 +19,11 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     let len = input.len(); // length in x and y are the same
     for (y, line) in input.iter().enumerate() {
         for (x, value) in line.iter().enumerate() {
-            if x > 0 && input[y][x - 1] <= *value {
-                continue;
-            } else if x + 1 < len && input[y][x + 1] <= *value {
-                continue;
-            } else if y > 0 && input[y - 1][x] <= *value {
-                continue;
-            } else if y + 1 < len && input[y + 1][x] <= *value {
+            let left_le = x > 0 && input[y][x - 1] <= *value;
+            let right_le = x + 1 < len && input[y][x + 1] <= *value;
+            let up_le = y > 0 && input[y - 1][x] <= *value;
+            let down_le = y + 1 < len && input[y + 1][x] <= *value;
+            if left_le || right_le || up_le || down_le {
                 continue;
             } else {
                 sum += (value - b'0' + 1) as u32;

@@ -11,7 +11,8 @@ use nom::{bytes::complete::tag, multi::separated_list1, sequence::separated_pair
 
 use crate::parse::parse_unsigned;
 
-type SolverInput = Vec<Line>;
+type ParserOutput = Vec<Line>;
+type SolverInput = [Line];
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Point {
@@ -207,18 +208,17 @@ impl Intersect<DiagonalLineDec> for DiagonalLineDec {
     fn intersect_with(&self, other: &DiagonalLineDec) -> Option<HashSet<Point>> {
         // for decreasing lines difference x-y is constant
         // if the differences aren't equal they're on separate super lines
-        if self.start.x >= self.start.y {
-            if other.start.x < other.start.y {
-                return None;
-            } else if self.start.x - self.start.y != other.start.x - other.start.y {
-                return None;
-            }
-        } else {
-            if other.start.x >= other.start.y {
-                return None;
-            } else if self.start.y - self.start.x != other.start.y - other.start.x {
+        let self_sign = self.start.x >= self.start.y;
+        let other_sign = other.start.x >= other.start.y;
+        if self_sign != other_sign {
+            return None;
+        }
+        if self_sign {
+            if self.start.x - self.start.y != other.start.x - other.start.y {
                 return None;
             }
+        } else if self.start.y - self.start.x != other.start.y - other.start.x {
+            return None;
         }
 
         let xs1 = self.start.x..=(self.start.x + self.length);
@@ -275,7 +275,7 @@ impl Intersect<DiagonalLineInc> for DiagonalLineDec {
         let rxs = other.start.x..=(other.start.x + other.length);
         let rys = (other.start.y - other.length)..=other.start.y;
         if lxs.contains(&x) && lys.contains(&y) && rxs.contains(&x) && rys.contains(&y) {
-            return Some(HashSet::from([Point { x, y }]));
+            Some(HashSet::from([Point { x, y }]))
         } else {
             None
         }
@@ -334,7 +334,7 @@ fn range_intersect<Idx: Ord + Copy>(
     }
 }
 
-pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     fn parse_point(input: &[u8]) -> IResult<&[u8], Point> {
         let (rest, (x, y)) = separated_pair(parse_unsigned, tag(b","), parse_unsigned)(input)?;
         Ok((rest, Point { x, y }))

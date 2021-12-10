@@ -1,6 +1,7 @@
 use anyhow::{bail, Result};
 
-type SolverInput = Vec<Command>;
+type ParserOutput = Vec<Command>;
+type SolverInput = [Command];
 
 pub enum Command {
     Down(u8),
@@ -8,7 +9,7 @@ pub enum Command {
     Up(u8),
 }
 
-pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     let mut parsed = vec![];
     let mut index = 0;
     while let Some(ch) = file.get(index) {
@@ -42,7 +43,7 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
             Command::Up(val) => depth -= *val as u32,
         }
     }
-    return depth * distance;
+    depth * distance
 }
 
 pub fn solve_part2(input: &SolverInput) -> u32 {
@@ -59,5 +60,5 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
             Command::Up(val) => aim -= *val as u32,
         }
     }
-    return depth * distance;
+    depth * distance
 }

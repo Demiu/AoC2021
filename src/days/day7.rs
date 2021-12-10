@@ -3,7 +3,8 @@ use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;
 
-type SolverInput = Vec<u32>;
+type ParserOutput = Vec<u32>;
+type SolverInput = [u32];
 
 // u32::abs_diff is nightly :(
 fn abs_diff(l: u32, r: u32) -> u32 {
@@ -14,11 +15,11 @@ fn abs_diff(l: u32, r: u32) -> u32 {
     }
 }
 
-pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     let mut numbers = separated_list1(tag(b","), parse_unsigned)(file)
         .map_err(|_| anyhow!("Failed parsing list of crab positions"))?
         .1;
-    numbers.sort();
+    numbers.sort_unstable();
     Ok(numbers)
 }
 
