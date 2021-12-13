@@ -5,49 +5,49 @@ use days::*;
 
 fn main() {
     let day1in = include_bytes!("../input/1/input.txt");
-    let day1parsed = day1::parse_input(day1in).expect("Failed to parse input file for day 1");
-    println!("Day 1 Part 1: {}", day1::solve_part1(&day1parsed));
-    println!("Day 1 Part 2: {}", day1::solve_part2(&day1parsed));
+    let day1parsed = day01::parse_input(day1in).expect("Failed to parse input file for day 1");
+    println!("Day 1 Part 1: {}", day01::solve_part1(&day1parsed));
+    println!("Day 1 Part 2: {}", day01::solve_part2(&day1parsed));
 
     let day2in = include_bytes!("../input/2/input.txt");
-    let day2parsed = day2::parse_input(day2in).expect("Failed to parse input file for day 2");
-    println!("Day 2 Part 1: {}", day2::solve_part1(&day2parsed));
-    println!("Day 2 Part 2: {}", day2::solve_part2(&day2parsed));
+    let day2parsed = day02::parse_input(day2in).expect("Failed to parse input file for day 2");
+    println!("Day 2 Part 1: {}", day02::solve_part1(&day2parsed));
+    println!("Day 2 Part 2: {}", day02::solve_part2(&day2parsed));
 
     let day3in = include_bytes!("../input/3/input.txt");
-    let day3parsed = day3::parse_input(day3in).expect("Failed to parse input file for day 3");
-    println!("Day 3 Part 1: {}", day3::solve_part1(&day3parsed));
-    println!("Day 3 Part 2: {}", day3::solve_part2(&day3parsed));
+    let day3parsed = day03::parse_input(day3in).expect("Failed to parse input file for day 3");
+    println!("Day 3 Part 1: {}", day03::solve_part1(&day3parsed));
+    println!("Day 3 Part 2: {}", day03::solve_part2(&day3parsed));
 
     let day4in = include_bytes!("../input/4/input.txt");
-    let day4parsed = day4::parse_input(day4in).expect("Failed to parse input file for day 4");
-    println!("Day 4 Part 1: {}", day4::solve_part1(&day4parsed));
-    println!("Day 4 Part 2: {}", day4::solve_part2(&day4parsed));
+    let day4parsed = day04::parse_input(day4in).expect("Failed to parse input file for day 4");
+    println!("Day 4 Part 1: {}", day04::solve_part1(&day4parsed));
+    println!("Day 4 Part 2: {}", day04::solve_part2(&day4parsed));
 
     let day5in = include_bytes!("../input/5/input.txt");
-    let day5parsed = day5::parse_input(day5in).expect("Failed to parse input file for day 5");
-    println!("Day 5 Part 1: {}", day5::solve_part1(&day5parsed));
-    println!("Day 5 Part 2: {}", day5::solve_part2(&day5parsed));
+    let day5parsed = day05::parse_input(day5in).expect("Failed to parse input file for day 5");
+    println!("Day 5 Part 1: {}", day05::solve_part1(&day5parsed));
+    println!("Day 5 Part 2: {}", day05::solve_part2(&day5parsed));
 
     let day6in = include_bytes!("../input/6/input.txt");
-    let day6parsed = day6::parse_input(day6in).expect("Failed to parse input file for day 6");
-    println!("Day 6 Part 1: {}", day6::solve_part1(&day6parsed));
-    println!("Day 6 Part 2: {}", day6::solve_part2(&day6parsed));
+    let day6parsed = day06::parse_input(day6in).expect("Failed to parse input file for day 6");
+    println!("Day 6 Part 1: {}", day06::solve_part1(&day6parsed));
+    println!("Day 6 Part 2: {}", day06::solve_part2(&day6parsed));
 
     let day7in = include_bytes!("../input/7/input.txt");
-    let day7parsed = day7::parse_input(day7in).expect("Failed to parse input file for day 7");
-    println!("Day 7 Part 1: {}", day7::solve_part1(&day7parsed));
-    println!("Day 7 Part 2: {}", day7::solve_part2(&day7parsed));
+    let day7parsed = day07::parse_input(day7in).expect("Failed to parse input file for day 7");
+    println!("Day 7 Part 1: {}", day07::solve_part1(&day7parsed));
+    println!("Day 7 Part 2: {}", day07::solve_part2(&day7parsed));
 
     let day8in = include_bytes!("../input/8/input.txt");
-    let day8parsed = day8::parse_input(day8in).expect("Failed to parse input file for day 8");
-    println!("Day 8 Part 1: {}", day8::solve_part1(&day8parsed));
-    println!("Day 8 Part 2: {}", day8::solve_part2(&day8parsed));
+    let day8parsed = day08::parse_input(day8in).expect("Failed to parse input file for day 8");
+    println!("Day 8 Part 1: {}", day08::solve_part1(&day8parsed));
+    println!("Day 8 Part 2: {}", day08::solve_part2(&day8parsed));
 
     let day9in = include_bytes!("../input/9/input.txt");
-    let day9parsed = day9::parse_input(day9in).expect("Failed to parse input file for day 9");
-    println!("Day 9 Part 1: {}", day9::solve_part1(&day9parsed));
-    println!("Day 9 Part 2: {}", day9::solve_part2(&day9parsed));
+    let day9parsed = day09::parse_input(day9in).expect("Failed to parse input file for day 9");
+    println!("Day 9 Part 1: {}", day09::solve_part1(&day9parsed));
+    println!("Day 9 Part 2: {}", day09::solve_part2(&day9parsed));
 
     let day10in = include_bytes!("../input/10/input.txt");
     let day10parsed = day10::parse_input(day10in).expect("Failed to parse input file for day 10");
