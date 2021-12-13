@@ -8,6 +8,7 @@ edition = "2018"
 [dependencies]
 anyhow = "1.0"
 atoi = "0.4"
+ndarray = { version="0.15", features=["rayon"] }
 nom = "7"
 itertools = "0.10"
 rayon = "1.5"
