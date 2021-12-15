@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
+use anyhow::{anyhow, Result};
 use nom::{
-    bytes::complete::tag, character::complete::alpha1, multi::separated_list1,
+    bytes::complete::tag, character::complete::alpha1, error::Error, multi::separated_list1,
     sequence::separated_pair,
 };
 
@@ -52,18 +53,17 @@ fn pair_most_minus_least(pairs: &PairMap, extra: u8) -> u64 {
     most_common - least_common
 }
 
-pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let insertion_rule_parser = separated_pair(alpha1, tag(b" -> "), alpha1);
     let insertion_rules_parser = separated_list1(tag(b"\n"), insertion_rule_parser);
 
-    let (template_parsed, rules_parsed) =
-        separated_pair::<_, _, _, _, nom::error::Error<_>, _, _, _>(
-            alpha1,
-            tag(b"\n\n"),
-            insertion_rules_parser,
-        )(file)
-        .map_err(|_| anyhow::anyhow!("Failed parsing input"))?
-        .1;
+    let (template_parsed, rules_parsed) = separated_pair::<_, _, _, _, Error<_>, _, _, _>(
+        alpha1,
+        tag(b"\n\n"),
+        insertion_rules_parser,
+    )(file)
+    .map_err(|_| anyhow!("Failed parsing input"))?
+    .1;
 
     let mut template: PairMap = HashMap::new();
     for pair in template_parsed.windows(2) {

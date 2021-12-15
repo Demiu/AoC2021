@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use anyhow::{anyhow, Result};
 use itertools::Itertools;
 use nom::{
     bytes::complete::tag,
@@ -47,7 +48,7 @@ fn fold_paper(paper: &mut HashSet<(u32, u32)>, fold: Fold) {
     }
 }
 
-pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let point_parser = separated_pair(parse_unsigned, tag(b","), parse_unsigned);
     let points_parser = separated_list1(tag(b"\n"), point_parser);
     let axis_parser = separated_pair(one_of("xy"), tag(b"="), parse_unsigned);
@@ -56,7 +57,7 @@ pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
     let mut input_parser = separated_pair(points_parser, tag(b"\n\n"), instructions_parser);
 
     let (points, folds) = input_parser(file)
-        .map_err(|_| anyhow::anyhow!("Failed parsing input"))?
+        .map_err(|_| anyhow!("Failed parsing input"))?
         .1;
     let mut point_set = HashSet::new();
     for p in points {
