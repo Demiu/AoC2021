@@ -1,87 +1,66 @@
-use std::cmp::max;
+use std::collections::HashSet;
 
-use ndarray::{s, Array2, ArrayViewMut2};
+use itertools::Itertools;
 use nom::{
     bytes::complete::tag,
     character::complete::one_of,
-    error::Error,
     multi::separated_list1,
     sequence::{preceded, separated_pair},
 };
 
 use crate::parse::parse_unsigned;
 
-type SolverInput = (Array2<bool>, Vec<Fold>);
+type SolverInput = (HashSet<(u32, u32)>, Vec<Fold>);
 
 #[derive(Clone, Copy)]
 pub enum Fold {
-    XAxis(usize),
-    YAxis(usize),
+    XAxis(u32),
+    YAxis(u32),
 }
 
-fn fold_array<'a>(array: &'a mut ArrayViewMut2<bool>, fold: Fold) -> ArrayViewMut2<'a, bool> {
+fn fold_paper(paper: &mut HashSet<(u32, u32)>, fold: Fold) {
+    let mut to_remove = vec![];
+    let mut modified_points = vec![];
     match fold {
         Fold::XAxis(foldx) => {
-            for y in 0..array.shape()[0] {
-                for x in foldx..array.shape()[1] {
-                    if array[[y, x]] {
-                        array[[y, foldx + foldx - x]] = true;
-                    }
+            for (x, y) in paper.iter() {
+                if *x > foldx {
+                    to_remove.push((*x, *y));
+                    modified_points.push((foldx + foldx - x, *y));
                 }
             }
-            array.slice_mut(s![.., ..foldx])
         }
         Fold::YAxis(foldy) => {
-            for y in foldy..array.shape()[0] {
-                for x in 0..array.shape()[1] {
-                    if array[[y, x]] {
-                        array[[foldy + foldy - y, x]] = true;
-                    }
+            for (x, y) in paper.iter() {
+                if *y > foldy {
+                    to_remove.push((*x, *y));
+                    modified_points.push((*x, foldy + foldy - y));
                 }
             }
-            array.slice_mut(s![..foldy, ..])
         }
+    }
+    for p in to_remove {
+        paper.remove(&p);
+    }
+    for p in modified_points {
+        paper.insert(p);
     }
 }
 
 pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
-    let point_parser = separated_pair::<_, usize, _, usize, Error<_>, _, _, _>(
-        parse_unsigned,
-        tag(b","),
-        parse_unsigned,
-    );
+    let point_parser = separated_pair(parse_unsigned, tag(b","), parse_unsigned);
     let points_parser = separated_list1(tag(b"\n"), point_parser);
-    let axis_parser = separated_pair::<_, _, _, usize, Error<_>, _, _, _>(
-        one_of("xy"),
-        tag(b"="),
-        parse_unsigned,
-    );
+    let axis_parser = separated_pair(one_of("xy"), tag(b"="), parse_unsigned);
     let instruction_parser = preceded(tag(b"fold along "), axis_parser);
     let instructions_parser = separated_list1(tag("\n"), instruction_parser);
-    let mut input_parser = separated_pair::<_, _, _, _, Error<_>, _, _, _>(
-        points_parser,
-        tag(b"\n\n"),
-        instructions_parser,
-    );
+    let mut input_parser = separated_pair(points_parser, tag(b"\n\n"), instructions_parser);
 
     let (points, folds) = input_parser(file)
         .map_err(|_| anyhow::anyhow!("Failed parsing input"))?
         .1;
-    let size_x = max(
-        points.iter().map(|t| t.0).max(),
-        folds.iter().map(|t| if t.0 == 'x' { t.1 } else { 0 }).max(),
-    )
-    .unwrap()
-        + 1;
-    let size_y = max(
-        points.iter().map(|t| t.1).max(),
-        folds.iter().map(|t| if t.0 == 'y' { t.1 } else { 0 }).max(),
-    )
-    .unwrap()
-        + 1;
-    let mut array = Array2::default([size_y, size_x]);
-    for (x, y) in points {
-        array[[y, x]] = true;
+    let mut point_set = HashSet::new();
+    for p in points {
+        point_set.insert(p);
     }
     let folds = folds
         .into_iter()
@@ -92,16 +71,34 @@ pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
         })
         .collect();
 
-    Ok((array, folds))
+    Ok((point_set, folds))
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {
-    let mut array = input.0.clone();
+    let mut paper = input.0.clone();
     if let Some(fold) = input.1.first() {
-        fold_array(&mut array.view_mut(), *fold)
-            .map(|b| u32::from(*b))
-            .sum()
+        fold_paper(&mut paper, *fold);
+        paper.len() as u32
     } else {
         0
     }
+}
+
+pub fn solve_part2(input: &SolverInput) -> String {
+    let mut paper = input.0.clone();
+    for fold in input.1.iter() {
+        fold_paper(&mut paper, *fold);
+    }
+
+    let xmax = paper.iter().map(|t| t.0).max().unwrap_or(0) as usize + 1;
+    let ymax = paper.iter().map(|t| t.1).max().unwrap_or(0) as usize + 1;
+    let mut array = vec![vec![false; xmax]; ymax];
+    for (x, y) in paper {
+        array[y as usize][x as usize] = true;
+    }
+
+    array
+        .into_iter()
+        .map(|line| line.into_iter().map(|c| if c { '#' } else { ' ' }).join(""))
+        .join("\n")
 }
