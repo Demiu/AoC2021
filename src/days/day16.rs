@@ -2,15 +2,13 @@ use anyhow::Context;
 
 use crate::parse::ascii_digit_to_value;
 
-type SolverInput = Vec<bool>;
+type SolverInput = Packet;
 
-#[repr(u8)]
-enum PacketKind {
-    Sum = 0,
+enum ComplexKind {
+    Sum,
     Product,
     Minimum,
     Maximum,
-    Literal, 
     Greater,
     Less,
     Equal,
@@ -18,25 +16,23 @@ enum PacketKind {
 
 enum PacketContent {
     Literal(u64),
-    Complex(Vec<Packet>),
+    Complex(ComplexKind, Vec<Packet>),
 }
 
-struct Packet {
+pub struct Packet {
     version: u8,
-    kind: PacketKind,
     content: PacketContent,
     length: usize,
 }
 
-impl From<u8> for PacketKind {
+impl From<u8> for ComplexKind {
     fn from(v: u8) -> Self {
-        use PacketKind::*;
+        use ComplexKind::*;
         match v {
             0 => Sum,
             1 => Product,
             2 => Minimum,
             3 => Maximum,
-            4 => Literal,
             5 => Greater,
             6 => Less,
             7 => Equal,
@@ -47,10 +43,26 @@ impl From<u8> for PacketKind {
 
 impl Packet {
     fn version_sum(&self) -> u32 {
-        if let PacketContent::Complex(inner_packets) = &self.content {
+        if let PacketContent::Complex(_, inner_packets) = &self.content {
             self.version as u32 + inner_packets.iter().map(Packet::version_sum).sum::<u32>()
         } else {
             self.version as u32
+        }
+    }
+
+    fn evaluate(&self) -> u64 {
+        use ComplexKind::*;
+        match &self.content {
+            PacketContent::Literal(val) => *val,
+            PacketContent::Complex(kind, subpackets) => match kind {
+                Sum => subpackets.iter().map(Packet::evaluate).sum(),
+                Product => subpackets.iter().map(Packet::evaluate).product(),
+                Minimum => subpackets.iter().map(Packet::evaluate).min().unwrap(),
+                Maximum => subpackets.iter().map(Packet::evaluate).max().unwrap(),
+                Greater => (subpackets[0].evaluate() > subpackets[1].evaluate()).into(),
+                Less => (subpackets[0].evaluate() < subpackets[1].evaluate()).into(),
+                Equal => (subpackets[0].evaluate() == subpackets[1].evaluate()).into(),
+            },
         }
     }
 }
@@ -125,7 +137,6 @@ fn parse_packet(data: &[bool]) -> Packet {
             length += extra_len;
             Packet {
                 version,
-                kind: PacketKind::Literal,
                 content: PacketContent::Literal(value),
                 length,
             }
@@ -135,8 +146,7 @@ fn parse_packet(data: &[bool]) -> Packet {
             length += extra_len;
             Packet {
                 version,
-                kind: type_id.into(),
-                content: PacketContent::Complex(sub_packets),
+                content: PacketContent::Complex(type_id.into(), sub_packets),
                 length,
             }
         },
@@ -168,16 +178,22 @@ pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
         })
     }
 
-    file.split_last()
+    let bits = file.split_last()
         .context("Failed to exclude the newline character at the end (input too short?)")?
         .1
         .into_iter()
         .map(ascii_digit_to_bool_array)
         .collect::<Option<Vec<_>>>()
-        .map(|v| v.into_iter().flatten().collect())
-        .context("Failed to convert all digits")
+        .map(|v| v.into_iter().flatten().collect::<Vec<_>>())
+        .context("Failed to convert all digits");
+    
+    bits.map(|vec| parse_packet(&vec))
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {
-    parse_packet(input).version_sum()
+    input.version_sum()
+}
+
+pub fn solve_part2(input: &SolverInput) -> u64 {
+    input.evaluate()
 }
