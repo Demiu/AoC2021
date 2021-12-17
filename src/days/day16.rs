@@ -1,4 +1,4 @@
-use anyhow::Context;
+use anyhow::{Context, Result};
 
 use crate::parse::ascii_digit_to_value;
 
@@ -36,7 +36,7 @@ impl From<u8> for ComplexKind {
             5 => Greater,
             6 => Less,
             7 => Equal,
-            _ => panic!("Cannot convert value of {} into a PacketKind", v)
+            _ => panic!("Cannot convert value of {} into a PacketKind", v),
         }
     }
 }
@@ -75,7 +75,9 @@ fn parse_literal(data: &[bool]) -> (u64, usize) {
         length += 5;
         for v in &group[1..] {
             value *= 2;
-            if *v { value += 1; }
+            if *v {
+                value += 1;
+            }
         }
         if !group[0] {
             break;
@@ -140,7 +142,7 @@ fn parse_packet(data: &[bool]) -> Packet {
                 content: PacketContent::Literal(value),
                 length,
             }
-        },
+        }
         0..=7 => {
             let (sub_packets, extra_len) = parse_inner_packets(&data[length..]);
             length += extra_len;
@@ -149,8 +151,8 @@ fn parse_packet(data: &[bool]) -> Packet {
                 content: PacketContent::Complex(type_id.into(), sub_packets),
                 length,
             }
-        },
-        _ => panic!("Invalid type id")
+        }
+        _ => panic!("Invalid type id"),
     }
 }
 
@@ -165,7 +167,7 @@ fn get_value(slice: &[bool]) -> u32 {
     value
 }
 
-pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     fn ascii_digit_to_bool_array(digit: &u8) -> Option<[bool; 4]> {
         ascii_digit_to_value(*digit).map(|v| {
             let mut array = [false; 4];
@@ -178,7 +180,8 @@ pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
         })
     }
 
-    let bits = file.split_last()
+    let bits = file
+        .split_last()
         .context("Failed to exclude the newline character at the end (input too short?)")?
         .1
         .into_iter()
@@ -186,7 +189,7 @@ pub fn parse_input(file: &[u8]) -> anyhow::Result<SolverInput> {
         .collect::<Option<Vec<_>>>()
         .map(|v| v.into_iter().flatten().collect::<Vec<_>>())
         .context("Failed to convert all digits");
-    
+
     bits.map(|vec| parse_packet(&vec))
 }
 
