@@ -1,6 +1,11 @@
-use std::ops::{AddAssign, MulAssign};
+use std::ops::{AddAssign, Mul, MulAssign};
 
-use nom::{character::complete::digit1, combinator::map_opt, error::ParseError, IResult};
+use nom::{
+    character::complete::{digit1, one_of},
+    combinator::{map_opt, opt},
+    error::ParseError,
+    IResult,
+};
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
     Some(match character {
@@ -48,4 +53,43 @@ where
     u8: Into<U>,
 {
     unsigned_parser_radix(10)(input)
+}
+
+pub fn signed_parser_radix<'a, I, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], I, E>
+where
+    E: ParseError<&'a [u8]>,
+    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I>,
+    u8: Into<I>,
+    i8: Into<I>,
+{
+    move |input| {
+        let (_, prefix) = opt(one_of("+-"))(&input[0..1])?;
+        let (positive, sub_input) = if let Some(prefix) = prefix {
+            if prefix == '+' {
+                (true, &input[1..])
+            } else {
+                (false, &input[1..])
+            }
+        } else {
+            (true, input)
+        };
+        map_opt(digit1, move |digits| {
+            parse_unsigned_radix(digits, radix).map(|u| {
+                u * if positive {
+                    (1i8).into()
+                } else {
+                    (-1i8).into()
+                }
+            })
+        })(sub_input)
+    }
+}
+
+pub fn parse_signed<I>(input: &[u8]) -> IResult<&[u8], I>
+where
+    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I>,
+    u8: Into<I>,
+    i8: Into<I>,
+{
+    signed_parser_radix(10)(input)
 }
