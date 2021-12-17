@@ -2,7 +2,7 @@ use std::ops::{AddAssign, MulAssign};
 
 use nom::{character::complete::digit1, combinator::map_opt, error::ParseError, IResult};
 
-fn ascii_digit_to_value(character: u8) -> Option<u8> {
+pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
     Some(match character {
         ch @ (b'0'..=b'9') => (ch - b'0'),
         ch @ (b'a'..=b'f') => (ch - b'a' + 10),

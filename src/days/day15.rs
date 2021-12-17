@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{cmp::Ordering, collections::HashMap};
 
 use anyhow::{anyhow, Result};
 use ndarray::Array2;
@@ -18,13 +18,13 @@ struct PfNode {
 }
 
 impl PartialOrd for PfNode {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
 
 impl Ord for PfNode {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         other.cost.cmp(&self.cost)
     }
 }
