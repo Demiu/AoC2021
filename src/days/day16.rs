@@ -171,9 +171,9 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     fn ascii_digit_to_bool_array(digit: &u8) -> Option<[bool; 4]> {
         ascii_digit_to_value(*digit).map(|v| {
             let mut array = [false; 4];
-            for i in 0..4 {
+            for (i, elem) in array.iter_mut().enumerate() {
                 if ((v >> (3 - i)) & 0b1) != 0 {
-                    array[i] = true;
+                    *elem = true;
                 }
             }
             array
@@ -184,7 +184,7 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
         .split_last()
         .context("Failed to exclude the newline character at the end (input too short?)")?
         .1
-        .into_iter()
+        .iter()
         .map(ascii_digit_to_bool_array)
         .collect::<Option<Vec<_>>>()
         .map(|v| v.into_iter().flatten().collect::<Vec<_>>())
