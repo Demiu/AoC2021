@@ -11,7 +11,8 @@ use nom::{
 
 use crate::parse::parse_unsigned;
 
-type SolverInput = Vec<Element>;
+type ParseOutput = Vec<Element>;
+type SolverInput = [Element];
 
 const EXPLODE_LEVEL: u8 = 4;
 
@@ -54,7 +55,7 @@ impl Element {
                 let (left, right) = (left.number(), right.number());
                 *self = Element::Number(0);
                 (left, right, true)
-            },
+            }
             Element::NestedPair { left, right } => {
                 if let (add_left, mut add_right, true) = left.explode(Some(level + 1)) {
                     if let Some(value) = add_right.take() {
@@ -120,7 +121,7 @@ impl Display for Element {
     }
 }
 
-pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParseOutput> {
     fn parse_element(input: &[u8]) -> IResult<&[u8], Element> {
         if let Ok((rest, value)) = parse_unsigned(input) {
             Ok((rest, Element::Number(value)))

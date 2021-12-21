@@ -3,8 +3,8 @@ use std::ops::{AddAssign, Mul, MulAssign};
 use nom::{
     character::complete::{digit1, one_of},
     combinator::{map_opt, opt},
-    error::ParseError,
-    IResult,
+    error::{ErrorKind, ParseError},
+    Err, IResult,
 };
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
@@ -63,6 +63,12 @@ where
     i8: Into<I>,
 {
     move |input| {
+        if input.is_empty() {
+            return Err(Err::Error(ParseError::from_error_kind(
+                input,
+                ErrorKind::Fail,
+            )));
+        }
         let (_, prefix) = opt(one_of("+-"))(&input[0..1])?;
         let (positive, sub_input) = if let Some(prefix) = prefix {
             if prefix == '+' {
