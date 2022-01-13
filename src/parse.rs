@@ -1,10 +1,12 @@
 use std::ops::{AddAssign, Mul, MulAssign, RangeInclusive};
 
 use nom::{
+    bytes::complete::tag,
     character::complete::{digit1, one_of},
     combinator::{map_opt, opt},
     error::{ErrorKind, ParseError},
-    Err, IResult, bytes::complete::tag, sequence::separated_pair,
+    sequence::separated_pair,
+    Err, IResult,
 };
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {

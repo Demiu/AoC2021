@@ -1,15 +1,10 @@
-use std::{
-    cmp::{max, min},
-    collections::HashSet,
-    hash::Hash,
-    ops::RangeInclusive,
-};
+use std::{collections::HashSet, hash::Hash, ops::RangeInclusive};
 
 use anyhow::{anyhow, Result};
 use itertools::Itertools;
 use nom::{bytes::complete::tag, multi::separated_list1, sequence::separated_pair, IResult};
 
-use crate::parse::parse_unsigned;
+use crate::{parse::parse_unsigned, traits::Intersect};
 
 type ParserOutput = Vec<Line>;
 type SolverInput = [Line];
@@ -18,10 +13,6 @@ type SolverInput = [Line];
 pub struct Point {
     x: u32,
     y: u32,
-}
-
-trait Intersect<T> {
-    fn intersect_with(&self, other: &T) -> Option<HashSet<Point>>;
 }
 
 pub struct HorizontalLine {
@@ -78,10 +69,12 @@ impl DiagonalLineDec {
 }
 
 impl Intersect<HorizontalLine> for HorizontalLine {
-    fn intersect_with(&self, other: &HorizontalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &Self) -> Option<Self::Output> {
         if self.y != other.y {
             None
-        } else if let Some(xs_intersect) = range_intersect(&self.xs, &other.xs) {
+        } else if let Some(xs_intersect) = self.xs.intersect_with(&other.xs) {
             let mut points = HashSet::new();
             for x in xs_intersect {
                 points.insert(Point { x, y: self.y });
@@ -94,10 +87,12 @@ impl Intersect<HorizontalLine> for HorizontalLine {
 }
 
 impl Intersect<VerticalLine> for VerticalLine {
-    fn intersect_with(&self, other: &VerticalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &Self) -> Option<Self::Output> {
         if self.x != other.x {
             None
-        } else if let Some(ys_intersect) = range_intersect(&self.ys, &other.ys) {
+        } else if let Some(ys_intersect) = self.ys.intersect_with(&other.ys) {
             let mut points = HashSet::new();
             for y in ys_intersect {
                 points.insert(Point { x: self.x, y });
@@ -110,7 +105,9 @@ impl Intersect<VerticalLine> for VerticalLine {
 }
 
 impl Intersect<HorizontalLine> for VerticalLine {
-    fn intersect_with(&self, other: &HorizontalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &HorizontalLine) -> Option<Self::Output> {
         if self.ys.contains(&other.y) && other.xs.contains(&self.x) {
             Some(HashSet::from([Point {
                 x: self.x,
@@ -123,7 +120,9 @@ impl Intersect<HorizontalLine> for VerticalLine {
 }
 
 impl Intersect<HorizontalLine> for DiagonalLineInc {
-    fn intersect_with(&self, other: &HorizontalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &HorizontalLine) -> Option<Self::Output> {
         if self.start.y >= other.y {
             let difference = self.start.y - other.y;
             let x = self.start.x + difference;
@@ -136,7 +135,9 @@ impl Intersect<HorizontalLine> for DiagonalLineInc {
 }
 
 impl Intersect<HorizontalLine> for DiagonalLineDec {
-    fn intersect_with(&self, other: &HorizontalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &HorizontalLine) -> Option<Self::Output> {
         if self.start.y <= other.y {
             // 6 hits, if and else
             let difference = other.y - self.start.y;
@@ -150,7 +151,9 @@ impl Intersect<HorizontalLine> for DiagonalLineDec {
 }
 
 impl Intersect<VerticalLine> for DiagonalLineInc {
-    fn intersect_with(&self, other: &VerticalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &VerticalLine) -> Option<Self::Output> {
         if self.start.x > other.x {
             return None;
         } else {
@@ -167,7 +170,9 @@ impl Intersect<VerticalLine> for DiagonalLineInc {
 }
 
 impl Intersect<VerticalLine> for DiagonalLineDec {
-    fn intersect_with(&self, other: &VerticalLine) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &VerticalLine) -> Option<Self::Output> {
         if self.start.x > other.x {
             return None;
         } else {
@@ -182,7 +187,9 @@ impl Intersect<VerticalLine> for DiagonalLineDec {
 }
 
 impl Intersect<DiagonalLineInc> for DiagonalLineInc {
-    fn intersect_with(&self, other: &DiagonalLineInc) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &DiagonalLineInc) -> Option<Self::Output> {
         // for increasing lines sum x+y is constant
         // if the sums aren't equal they're on separate super lines
         if self.start.x + self.start.y != other.start.x + other.start.y {
@@ -191,7 +198,7 @@ impl Intersect<DiagonalLineInc> for DiagonalLineInc {
 
         let xs1 = self.start.x..=(self.start.x + self.length);
         let xs2 = other.start.x..=(other.start.x + other.length);
-        if let Some(xs) = range_intersect(&xs1, &xs2) {
+        if let Some(xs) = xs1.intersect_with(&xs2) {
             let mut points = HashSet::new();
             // y can be calculated backwards from sum
             let sum = self.start.x + self.start.y;
@@ -205,7 +212,9 @@ impl Intersect<DiagonalLineInc> for DiagonalLineInc {
 }
 
 impl Intersect<DiagonalLineDec> for DiagonalLineDec {
-    fn intersect_with(&self, other: &DiagonalLineDec) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &DiagonalLineDec) -> Option<Self::Output> {
         // for decreasing lines difference x-y is constant
         // if the differences aren't equal they're on separate super lines
         let self_sign = self.start.x >= self.start.y;
@@ -223,7 +232,7 @@ impl Intersect<DiagonalLineDec> for DiagonalLineDec {
 
         let xs1 = self.start.x..=(self.start.x + self.length);
         let xs2 = other.start.x..=(other.start.x + other.length);
-        if let Some(xs) = range_intersect(&xs1, &xs2) {
+        if let Some(xs) = xs1.intersect_with(&xs2) {
             let mut points = HashSet::new();
             for x in xs {
                 let y = if self.start.x >= self.start.y {
@@ -240,7 +249,9 @@ impl Intersect<DiagonalLineDec> for DiagonalLineDec {
 }
 
 impl Intersect<DiagonalLineInc> for DiagonalLineDec {
-    fn intersect_with(&self, other: &DiagonalLineInc) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &DiagonalLineInc) -> Option<Self::Output> {
         // ly = lx + a --> a = ly - lx
         // ry = -rx + b --> b = ry + rx
         // cross point: lx = rx and ly = ry
@@ -292,7 +303,9 @@ where X: Intersect<Y> {
 }*/
 
 impl Intersect<Line> for Line {
-    fn intersect_with(&self, other: &Line) -> Option<HashSet<Point>> {
+    type Output = HashSet<Point>;
+
+    fn intersect_with(&self, other: &Line) -> Option<Self::Output> {
         match (self, other) {
             (Horizontal(h1), Horizontal(h2)) => h1.intersect_with(h2),
             (Vertical(v1), Vertical(v2)) => v1.intersect_with(v2),
@@ -320,17 +333,6 @@ fn make_range(one: u32, two: u32) -> RangeInclusive<u32> {
         one..=two
     } else {
         two..=one
-    }
-}
-
-fn range_intersect<Idx: Ord + Copy>(
-    l: &RangeInclusive<Idx>,
-    r: &RangeInclusive<Idx>,
-) -> Option<RangeInclusive<Idx>> {
-    if l.start() > r.end() || r.start() > l.end() {
-        None
-    } else {
-        Some(max(*l.start(), *r.start())..=min(*l.end(), *r.end()))
     }
 }
 

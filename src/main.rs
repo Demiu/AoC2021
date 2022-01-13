@@ -1,5 +1,6 @@
 mod days;
 mod parse;
+mod traits;
 
 use days::*;
 
