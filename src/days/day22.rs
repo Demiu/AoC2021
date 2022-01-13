@@ -11,9 +11,9 @@ use nom::{
 use crate::{parse::parse_range_signed, traits::Intersect};
 
 type SolverInput = Vec<RebootStep>;
-type CoordInt = i32;
+type CoordInt = i64;
 
-const SMALL_LIMIT: i32 = 100;
+const SMALL_LIMIT: CoordInt = 100;
 
 #[derive(Clone)]
 struct Cuboid {
@@ -37,7 +37,7 @@ impl Cuboid {
             && self.range_z.end().abs() < SMALL_LIMIT
     }
 
-    fn volume(&self) -> i32 {
+    fn volume(&self) -> CoordInt {
         (self.range_x.end() - self.range_x.start() + 1)
             * (self.range_y.end() - self.range_y.start() + 1)
             * (self.range_z.end() - self.range_z.start() + 1)
@@ -60,6 +60,30 @@ impl Intersect for Cuboid {
             _ => None,
         }
     }
+}
+
+fn steps_volume(steps: &[RebootStep]) -> u64 {
+    let mut positive_cuboids = vec![];
+    let mut negative_cuboids = vec![];
+
+    for step in steps {
+        let new_negative = step.volume.intersect_with(&positive_cuboids[..]);
+        let new_positive = step.volume.intersect_with(&negative_cuboids[..]);
+        if let Some(to_ext) = new_negative {
+            negative_cuboids.extend(to_ext);
+        }
+        if let Some(to_ext) = new_positive {
+            positive_cuboids.extend(to_ext);
+        }
+
+        if step.is_on {
+            positive_cuboids.push(step.volume.clone());
+        }
+    }
+
+    let pos_volume: u64 = positive_cuboids.iter().map(|c| c.volume() as u64).sum();
+    let neg_volume: u64 = negative_cuboids.iter().map(|c| c.volume() as u64).sum();
+    pos_volume - neg_volume
 }
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
@@ -97,35 +121,11 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     .context("Failed mapping lines into RebootStep's")
 }
 
-pub fn solve_part1(input: &SolverInput) -> u32 {
-    let mut positive_cuboids = vec![];
-    let mut negative_cuboids = vec![];
-
+pub fn solve_part1(input: &SolverInput) -> u64 {
     let small_end = input.partition_point(|step| step.volume.is_small());
-    for step in &input[..small_end] {
-        let mut derived_negative = vec![];
-        for cuboid in &positive_cuboids {
-            if let Some(overlap) = step.volume.intersect_with(cuboid) {
-                derived_negative.push(overlap);
-            }
-        }
+    steps_volume(&input[..small_end])
+}
 
-        let mut derived_positive = vec![];
-        for cuboid in &negative_cuboids {
-            if let Some(overlap) = step.volume.intersect_with(cuboid) {
-                derived_positive.push(overlap);
-            }
-        }
-
-        negative_cuboids.extend(derived_negative);
-        positive_cuboids.extend(derived_positive);
-
-        if step.is_on {
-            positive_cuboids.push(step.volume.clone());
-        }
-    }
-
-    let pos_volume: i32 = positive_cuboids.iter().map(Cuboid::volume).sum();
-    let neg_volume: i32 = negative_cuboids.iter().map(Cuboid::volume).sum();
-    (pos_volume - neg_volume) as u32
+pub fn solve_part2(input: &SolverInput) -> u64 {
+    steps_volume(input)
 }

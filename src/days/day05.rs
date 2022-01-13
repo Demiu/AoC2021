@@ -68,7 +68,7 @@ impl DiagonalLineDec {
     }
 }
 
-impl Intersect<HorizontalLine> for HorizontalLine {
+impl Intersect for HorizontalLine {
     type Output = HashSet<Point>;
 
     fn intersect_with(&self, other: &Self) -> Option<Self::Output> {
@@ -86,7 +86,7 @@ impl Intersect<HorizontalLine> for HorizontalLine {
     }
 }
 
-impl Intersect<VerticalLine> for VerticalLine {
+impl Intersect for VerticalLine {
     type Output = HashSet<Point>;
 
     fn intersect_with(&self, other: &Self) -> Option<Self::Output> {
@@ -186,7 +186,7 @@ impl Intersect<VerticalLine> for DiagonalLineDec {
     }
 }
 
-impl Intersect<DiagonalLineInc> for DiagonalLineInc {
+impl Intersect for DiagonalLineInc {
     type Output = HashSet<Point>;
 
     fn intersect_with(&self, other: &DiagonalLineInc) -> Option<Self::Output> {
@@ -211,7 +211,7 @@ impl Intersect<DiagonalLineInc> for DiagonalLineInc {
     }
 }
 
-impl Intersect<DiagonalLineDec> for DiagonalLineDec {
+impl Intersect for DiagonalLineDec {
     type Output = HashSet<Point>;
 
     fn intersect_with(&self, other: &DiagonalLineDec) -> Option<Self::Output> {
@@ -293,16 +293,7 @@ impl Intersect<DiagonalLineInc> for DiagonalLineDec {
     }
 }
 
-/*
-// reverse implement intersect
-impl<X, Y> Intersect<X> for Y
-where X: Intersect<Y> {
-    fn intersect_with(&self, other: &X) -> Option<HashSet<Point>> {
-        other.intersect_with(self)
-    }
-}*/
-
-impl Intersect<Line> for Line {
+impl Intersect for Line {
     type Output = HashSet<Point>;
 
     fn intersect_with(&self, other: &Line) -> Option<Self::Output> {
