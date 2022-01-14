@@ -57,6 +57,7 @@ where
     unsigned_parser_radix(10)(input)
 }
 
+#[allow(dead_code)]
 pub fn parse_range_unsigned<U>(input: &[u8]) -> IResult<&[u8], RangeInclusive<U>>
 where
     U: AddAssign<U> + MulAssign<U>,

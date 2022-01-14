@@ -10,7 +10,8 @@ use nom::{
 
 use crate::{parse::parse_range_signed, traits::Intersect};
 
-type SolverInput = Vec<RebootStep>;
+type ParserOutput = Vec<RebootStep>;
+type SolverInput = [RebootStep];
 type CoordInt = i64;
 
 const SMALL_LIMIT: CoordInt = 100;
@@ -70,10 +71,10 @@ fn steps_volume(steps: &[RebootStep]) -> u64 {
         let new_negative = step.volume.intersect_with(&positive_cuboids[..]);
         let new_positive = step.volume.intersect_with(&negative_cuboids[..]);
         if let Some(to_ext) = new_negative {
-            negative_cuboids.extend(to_ext);
+            negative_cuboids.extend(to_ext.into_iter().flatten());
         }
         if let Some(to_ext) = new_positive {
-            positive_cuboids.extend(to_ext);
+            positive_cuboids.extend(to_ext.into_iter().flatten());
         }
 
         if step.is_on {
@@ -86,7 +87,7 @@ fn steps_volume(steps: &[RebootStep]) -> u64 {
     pos_volume - neg_volume
 }
 
-pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     {
         let xyz_alt = alt((tag(b"x="), tag(b"y="), tag(b"z=")));
         let range_eq = preceded(xyz_alt, parse_range_signed);

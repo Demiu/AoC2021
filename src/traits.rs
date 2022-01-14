@@ -8,20 +8,20 @@ pub trait Intersect<Rhs: ?Sized = Self>: Sized {
     fn intersect_with(&self, other: &Rhs) -> Option<Self::Output>;
 }
 
-// Impl for slices
+// Derived impl for slices of intersectable types
+// Returns an Some of Vec of results of all intersections (including None's) or None if there aren't any
 impl<T, U> Intersect<[U]> for T
 where
     T: Intersect<U>,
 {
-    type Output = Vec<T::Output>;
+    type Output = Vec<Option<T::Output>>;
 
     fn intersect_with(&self, other: &[U]) -> Option<Self::Output> {
-        other
+        Some(other
             .iter()
             .map(|u| self.intersect_with(u))
-            .filter(Option::is_some)
-            .collect::<Option<Vec<_>>>()
-            .and_then(|v| if v.len() == 0 { None } else { Some(v) })
+            .collect::<Vec<_>>())
+            .and_then(|v| if v.is_empty() { None } else { Some(v) })
     }
 }
 
