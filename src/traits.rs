@@ -17,11 +17,13 @@ where
     type Output = Vec<Option<T::Output>>;
 
     fn intersect_with(&self, other: &[U]) -> Option<Self::Output> {
-        Some(other
-            .iter()
-            .map(|u| self.intersect_with(u))
-            .collect::<Vec<_>>())
-            .and_then(|v| if v.is_empty() { None } else { Some(v) })
+        Some(
+            other
+                .iter()
+                .map(|u| self.intersect_with(u))
+                .collect::<Vec<_>>(),
+        )
+        .and_then(|v| if v.is_empty() { None } else { Some(v) })
     }
 }
 
