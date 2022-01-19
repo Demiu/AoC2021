@@ -12,7 +12,8 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::parse::parse_signed;
 
-type SolverInput = Vec<Instruction>;
+type ParserOutput = Vec<Instruction>;
+type SolverInput = [Instruction];
 
 const INPUT_LENGTH: usize = 14;
 
@@ -152,7 +153,6 @@ impl Alu {
         }
     }
 
-    // requires Some input
     fn run_instruction(&mut self, instruction: Instruction, input: &mut Option<i64>) -> Result<()> {
         use Instruction::*;
         match instruction {
@@ -213,22 +213,16 @@ fn optimize_instructions(instructions: Vec<Instruction>) -> Vec<Instruction> {
 
     fn remove_noops(ins: &mut VI) -> bool {
         let old_len = ins.len();
-        ins.retain(|i| match i {
-            Mul(_, Value(1)) => false,
-            Div(_, Value(1)) => false,
-            _ => true,
-        });
+        ins.retain(|i| matches!(i, Mul(_, Value(1)) | Div(_, Value(1))));
         old_len != ins.len()
     }
     fn simplify_instructions(ins: &mut VI) -> bool {
         let mut ret = false;
         for i in ins.iter_mut() {
-            match i {
-                Mul(reg, Value(0)) => {
-                    *i = Clear(*reg);
-                    ret = true;
-                }
-                _ => (),
+            if let Mul(reg, Value(0)) = i {
+                *i = Clear(*reg);
+                ret = true;
+
             }
         }
         let mut i = 0;
@@ -255,7 +249,7 @@ fn optimize_instructions(instructions: Vec<Instruction>) -> Vec<Instruction> {
         for i in 0..ins.len() {
             let discarded_reg = match ins[i] {
                 Instruction::Clear(_) => continue, // Skip clears
-                inst @ _ => inst.discards_register(),
+                inst => inst.discards_register(),
             };
             if discarded_reg.is_none() {
                 continue;
@@ -283,10 +277,6 @@ fn optimize_instructions(instructions: Vec<Instruction>) -> Vec<Instruction> {
             || simplify_instructions(&mut instructions)
             || insert_implicit_clears(&mut instructions);
         if !something_changed {
-            // Insert the clears on end for variables we do not check
-            instructions.push(Clear(Register::X));
-            instructions.push(Clear(Register::Y));
-            instructions.push(Clear(Register::W));
             break instructions;
         }
     }
@@ -356,7 +346,7 @@ where
     })
 }
 
-pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
     fn parse_register(input: &[u8]) -> IResult<&[u8], Register> {
         let (rest, sign) = alt((tag(b"x"), tag(b"y"), tag(b"z"), tag(b"w")))(input)?;
         let reg = match sign[0] {

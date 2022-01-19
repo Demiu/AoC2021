@@ -675,7 +675,7 @@ fn queue_possible_moves(
 
 fn calc_solve_cost(burrow: Burrow) -> usize {
     let mut states = PriorityQueue::new();
-    states.push(burrow.clone(), Reverse(0));
+    states.push(burrow, Reverse(0));
     while let Some((state, cost)) = states.pop() {
         if state.is_solved() {
             return cost.0;
@@ -683,7 +683,7 @@ fn calc_solve_cost(burrow: Burrow) -> usize {
         queue_possible_moves(state, cost.0, &mut states);
     }
 
-    return 0;
+    0
 }
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
@@ -700,8 +700,7 @@ pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     .map_err(|_| anyhow!("Failed parsing amphipods"))?
     .1
     .into_iter()
-    .flatten()
-    .collect::<Vec<Amphipod>>();
+    .flatten();
 
     let rooms = {
         let mut rooms = [vec![], vec![], vec![], vec![]];
