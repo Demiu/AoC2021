@@ -222,7 +222,6 @@ fn optimize_instructions(instructions: Vec<Instruction>) -> Vec<Instruction> {
             if let Mul(reg, Value(0)) = i {
                 *i = Clear(*reg);
                 ret = true;
-
             }
         }
         let mut i = 0;
