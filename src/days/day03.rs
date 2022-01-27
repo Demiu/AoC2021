@@ -68,7 +68,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     }
     fn find_new_max_idx(s: &[(&[u8], u32)], max: u32) -> usize {
         match s.binary_search_by_key(&max, |t| t.1) {
-            Ok(v) => v,
+            Ok(v) => v+1,
             Err(v) => v,
         }
     }
@@ -132,13 +132,77 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
         }
     }
 
-    if oxyfound.is_none() && oxyminidx == oxymaxidx {
+    if oxyfound.is_none() && (oxymaxidx - oxyminidx) < 2 {
         oxyfound = Some(input.lines[oxyminidx].1);
     }
-    if co2found.is_none() && co2minidx == co2maxidx {
+    if co2found.is_none() && (co2maxidx - co2minidx) < 2 {
         co2found = Some(input.lines[co2minidx].1);
     }
 
     oxyfound.expect("Oxygen value should be found")
         * co2found.expect("Oxygen value should be found")
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "00100\n",
+        "11110\n",
+        "10110\n",
+        "10111\n",
+        "10101\n",
+        "01111\n",
+        "00111\n",
+        "11100\n",
+        "10000\n",
+        "11001\n",
+        "00010\n",
+        "01010\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn example_parse() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+
+        let mut desired_output = [
+            (&b"00100"[..], 4),
+            (&b"11110"[..], 30),
+            (&b"10110"[..], 22),
+            (&b"10111"[..], 23),
+            (&b"10101"[..], 21),
+            (&b"01111"[..], 15),
+            (&b"00111"[..], 7),
+            (&b"11100"[..], 28),
+            (&b"10000"[..], 16),
+            (&b"11001"[..], 25),
+            (&b"00010"[..], 2),
+            (&b"01010"[..], 10),
+        ];
+        desired_output.sort_unstable_by_key(|t| t.1);
+        let parsed = parsed.unwrap();
+        assert_eq!(parsed.lines, desired_output);
+        assert_eq!(parsed.line_length, 5);
+    }
+
+    #[test]
+    fn example_part1() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+
+        let result = solve_part1(&parsed.unwrap());
+        assert_eq!(result, 198);
+    }
+
+    #[test]
+    fn example_part2() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+
+        let result = solve_part2(&parsed.unwrap());
+        assert_eq!(result, 230);
+    }
 }

@@ -33,3 +33,38 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     }
     solution
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "199\n", "200\n", "208\n", "210\n", "200\n", "207\n", "240\n", "269\n", "260\n", "263\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn example_parse() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        assert_eq!(parsed.unwrap(), [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]);
+    }
+
+    #[test]
+    fn example_part1() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+
+        let part1 = solve_part1(&parsed.unwrap());
+        assert_eq!(part1, 7);
+    }
+
+    #[test]
+    fn example_part2() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+
+        let part2 = solve_part2(&parsed.unwrap());
+        assert_eq!(part2, 5);
+    }
+}

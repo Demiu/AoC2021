@@ -3,6 +3,7 @@ use anyhow::{bail, Result};
 type ParserOutput = Vec<Command>;
 type SolverInput = [Command];
 
+#[derive(Debug, PartialEq)]
 pub enum Command {
     Down(u8),
     Forward(u8),
@@ -61,4 +62,46 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
         }
     }
     depth * distance
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "forward 5\n",
+        "down 5\n",
+        "forward 8\n",
+        "up 3\n",
+        "down 8\n",
+        "forward 2\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn example_parse() {
+        use super::Command::*;
+
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        assert_eq!(parsed.unwrap(), [Forward(5), Down(5), Forward(8), Up(3), Down(8), Forward(2)])
+    }
+
+    #[test]
+    fn example_part1() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+
+        let part1 = solve_part1(&parsed.unwrap());
+        assert_eq!(part1, 150);
+    }
+
+    #[test]
+    fn example_part2() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        
+        let part2 = solve_part2(&parsed.unwrap());
+        assert_eq!(part2, 900);
+    }
 }
