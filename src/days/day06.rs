@@ -61,19 +61,5 @@ mod test {
         assert_eq!(parsed.unwrap(), [0, 1, 1, 2, 1, 0, 0, 0, 0]);
     }
 
-    #[test]
-    fn solve_part1_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let result = solve_part1(&parsed.unwrap());
-        assert_eq!(result, 5934);
-    }
-
-    #[test]
-    fn solve_part2_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let result = solve_part2(&parsed.unwrap());
-        assert_eq!(result, 26984457539);
-    }
+    crate::macros::make_test_for_day!(example, EXAMPLE, 5934, 26984457539);
 }
