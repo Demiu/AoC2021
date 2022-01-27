@@ -15,26 +15,31 @@ pub struct Point {
     y: u32,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct HorizontalLine {
     xs: RangeInclusive<u32>,
     y: u32,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct VerticalLine {
     x: u32,
     ys: RangeInclusive<u32>,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct DiagonalLineInc {
     start: Point,
     length: u32,
 }
 
+#[derive(Debug, PartialEq)]
 pub struct DiagonalLineDec {
     start: Point,
     length: u32,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum Line {
     Horizontal(HorizontalLine),
     Vertical(VerticalLine),
@@ -392,4 +397,92 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
         }
     }
     points.len() as u32
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "0,9 -> 5,9\n",
+        "8,0 -> 0,8\n",
+        "9,4 -> 3,4\n",
+        "2,2 -> 2,1\n",
+        "7,0 -> 7,4\n",
+        "6,4 -> 2,0\n",
+        "0,9 -> 2,9\n",
+        "3,4 -> 1,4\n",
+        "0,0 -> 8,8\n",
+        "5,5 -> 8,2\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn parse_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = parsed.unwrap();
+        assert_eq!(
+            parsed[0],
+            Line::Horizontal(HorizontalLine { xs: 0..=5, y: 9 })
+        );
+        assert_eq!(
+            parsed[1],
+            Line::IncDiagonal(DiagonalLineInc {
+                start: Point { x: 0, y: 8 },
+                length: 8
+            })
+        );
+        assert_eq!(
+            parsed[2],
+            Line::Horizontal(HorizontalLine { xs: 3..=9, y: 4 })
+        );
+        assert_eq!(parsed[3], Line::Vertical(VerticalLine { x: 2, ys: 1..=2 }));
+        assert_eq!(parsed[4], Line::Vertical(VerticalLine { x: 7, ys: 0..=4 }));
+        assert_eq!(
+            parsed[5],
+            Line::DecDiagonal(DiagonalLineDec {
+                start: Point { x: 2, y: 0 },
+                length: 4
+            })
+        );
+        assert_eq!(
+            parsed[6],
+            Line::Horizontal(HorizontalLine { xs: 0..=2, y: 9 })
+        );
+        assert_eq!(
+            parsed[7],
+            Line::Horizontal(HorizontalLine { xs: 1..=3, y: 4 })
+        );
+        assert_eq!(
+            parsed[8],
+            Line::DecDiagonal(DiagonalLineDec {
+                start: Point { x: 0, y: 0 },
+                length: 8
+            })
+        );
+        assert_eq!(
+            parsed[9],
+            Line::IncDiagonal(DiagonalLineInc {
+                start: Point { x: 5, y: 5 },
+                length: 3
+            })
+        );
+    }
+
+    #[test]
+    fn solve_part1_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part1(&parsed.unwrap());
+        assert_eq!(result, 5);
+    }
+
+    #[test]
+    fn solve_part2_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part2(&parsed.unwrap());
+        assert_eq!(result, 12);
+    }
 }

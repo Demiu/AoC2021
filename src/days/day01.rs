@@ -44,26 +44,27 @@ mod test {
     .as_bytes();
 
     #[test]
-    fn example_parse() {
+    fn parse_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-        assert_eq!(parsed.unwrap(), [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]);
+        assert_eq!(
+            parsed.unwrap(),
+            [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
+        );
     }
 
     #[test]
-    fn example_part1() {
+    fn solve_part1_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-
         let part1 = solve_part1(&parsed.unwrap());
         assert_eq!(part1, 7);
     }
 
     #[test]
-    fn example_part2() {
+    fn solve_part2_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-
         let part2 = solve_part2(&parsed.unwrap());
         assert_eq!(part2, 5);
     }

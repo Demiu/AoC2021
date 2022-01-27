@@ -10,7 +10,7 @@ pub struct SolverInput {
 
 type Cell = (u8, bool);
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 struct BingoBoard {
     grid: Vec<Cell>,
     side_len: usize,
@@ -162,4 +162,91 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
         }
     }
     0
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1\n",
+        "\n",
+        "22 13 17 11  0\n",
+        " 8  2 23  4 24\n",
+        "21  9 14 16  7\n",
+        " 6 10  3 18  5\n",
+        " 1 12 20 15 19\n",
+        "\n",
+        " 3 15  0  2 22\n",
+        " 9 18 13 17  5\n",
+        "19  8  7 25 23\n",
+        "20 11 10 24  4\n",
+        "14 21 16 12  6\n",
+        "\n",
+        "14 21 17 24  4\n",
+        "10 16 15  9 19\n",
+        "18  8 23 26 20\n",
+        "22 11 13  6  5\n",
+        " 2  0 12  3  7\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn parse_example_draws() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let desired_draws = [
+            7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19,
+            3, 26, 1,
+        ];
+        assert_eq!(parsed.unwrap().draws, desired_draws);
+    }
+
+    #[test]
+    fn parse_example_boards() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = parsed.unwrap();
+
+        let desired_boards = [
+            [
+                22, 13, 17, 11, 0, 8, 2, 23, 4, 24, 21, 9, 14, 16, 7, 6, 10, 3, 18, 5, 1, 12, 20,
+                15, 19,
+            ],
+            [
+                3, 15, 0, 2, 22, 9, 18, 13, 17, 5, 19, 8, 7, 25, 23, 20, 11, 10, 24, 4, 14, 21, 16,
+                12, 6,
+            ],
+            [
+                14, 21, 17, 24, 4, 10, 16, 15, 9, 19, 18, 8, 23, 26, 20, 22, 11, 13, 6, 5, 2, 0,
+                12, 3, 7,
+            ],
+        ]
+        .map(|board| board.map(|num| (num, false)));
+        assert_eq!(parsed.boards.len(), desired_boards.len());
+        for i in 0..parsed.boards.len() {
+            assert_eq!(
+                parsed.boards[i].grid, desired_boards[i],
+                "Board #{} parsed improperly",
+                i
+            );
+            assert_eq!(parsed.boards[i].side_len, 5);
+        }
+    }
+
+    #[test]
+    fn solve_part1_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part1(&parsed.unwrap());
+        assert_eq!(result, 4512);
+    }
+
+    #[test]
+    fn solve_part2_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part2(&parsed.unwrap());
+        assert_eq!(result, 1924);
+    }
 }

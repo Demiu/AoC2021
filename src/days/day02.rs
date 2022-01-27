@@ -79,28 +79,29 @@ mod test {
     .as_bytes();
 
     #[test]
-    fn example_parse() {
+    fn parse_example() {
         use super::Command::*;
 
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-        assert_eq!(parsed.unwrap(), [Forward(5), Down(5), Forward(8), Up(3), Down(8), Forward(2)])
+        assert_eq!(
+            parsed.unwrap(),
+            [Forward(5), Down(5), Forward(8), Up(3), Down(8), Forward(2)]
+        )
     }
 
     #[test]
-    fn example_part1() {
+    fn solve_part1_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-
         let part1 = solve_part1(&parsed.unwrap());
         assert_eq!(part1, 150);
     }
 
     #[test]
-    fn example_part2() {
+    fn solve_part2_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-        
         let part2 = solve_part2(&parsed.unwrap());
         assert_eq!(part2, 900);
     }

@@ -47,3 +47,33 @@ pub fn solve_part2(input: &SolverInput) -> u64 {
     }
     lanternfish.iter().sum()
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = "3,4,3,1,2".as_bytes();
+
+    #[test]
+    fn parse_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        assert_eq!(parsed.unwrap(), [0, 1, 1, 2, 1, 0, 0, 0, 0]);
+    }
+
+    #[test]
+    fn solve_part1_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part1(&parsed.unwrap());
+        assert_eq!(result, 5934);
+    }
+
+    #[test]
+    fn solve_part2_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part2(&parsed.unwrap());
+        assert_eq!(result, 26984457539);
+    }
+}

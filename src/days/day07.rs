@@ -35,19 +35,55 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
 }
 
 pub fn solve_part2(input: &SolverInput) -> u32 {
+    let fuel_sum = |to| {
+        let mut total_sum = 0;
+        for pos in input {
+            // S = ((a0 + an)*n) / 2
+            let difference = abs_diff(*pos, to);
+            let n = difference + 1;
+            let sum = (difference * n) / 2;
+            total_sum += sum;
+        }
+        total_sum
+    };
+
     let average = {
         let sum: u32 = input.iter().sum();
         let n = input.len() as u32;
         sum / n
     };
 
-    let mut total_sum = 0;
-    for pos in input {
-        // S = ((a0 + an)*n) / 2
-        let difference = abs_diff(*pos, average);
-        let n = difference + 1;
-        let sum = (difference * n) / 2;
-        total_sum += sum;
+    u32::min(fuel_sum(average), fuel_sum(average + 1))
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = "16,1,2,0,4,2,7,1,2,14".as_bytes();
+
+    #[test]
+    fn parse_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let mut desired = [16, 1, 2, 0, 4, 2, 7, 1, 2, 14];
+        desired.sort_unstable();
+        assert_eq!(parsed.unwrap(), desired);
     }
-    total_sum
+
+    #[test]
+    fn solve_part1_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part1(&parsed.unwrap());
+        assert_eq!(result, 37);
+    }
+
+    #[test]
+    fn solve_part2_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let result = solve_part2(&parsed.unwrap());
+        assert_eq!(result, 168);
+    }
 }

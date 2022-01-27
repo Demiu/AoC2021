@@ -68,7 +68,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     }
     fn find_new_max_idx(s: &[(&[u8], u32)], max: u32) -> usize {
         match s.binary_search_by_key(&max, |t| t.1) {
-            Ok(v) => v+1,
+            Ok(v) => v + 1,
             Err(v) => v,
         }
     }
@@ -148,25 +148,16 @@ mod test {
     use super::*;
 
     const EXAMPLE: &[u8] = concat!(
-        "00100\n",
-        "11110\n",
-        "10110\n",
-        "10111\n",
-        "10101\n",
-        "01111\n",
-        "00111\n",
-        "11100\n",
-        "10000\n",
-        "11001\n",
-        "00010\n",
-        "01010\n",
+        "00100\n", "11110\n", "10110\n", "10111\n", "10101\n", "01111\n", "00111\n", "11100\n",
+        "10000\n", "11001\n", "00010\n", "01010\n",
     )
     .as_bytes();
 
     #[test]
-    fn example_parse() {
+    fn parse_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = parsed.unwrap();
 
         let mut desired_output = [
             (&b"00100"[..], 4),
@@ -183,25 +174,22 @@ mod test {
             (&b"01010"[..], 10),
         ];
         desired_output.sort_unstable_by_key(|t| t.1);
-        let parsed = parsed.unwrap();
         assert_eq!(parsed.lines, desired_output);
         assert_eq!(parsed.line_length, 5);
     }
 
     #[test]
-    fn example_part1() {
+    fn solve_part1_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-
         let result = solve_part1(&parsed.unwrap());
         assert_eq!(result, 198);
     }
 
     #[test]
-    fn example_part2() {
+    fn solve_part2_example() {
         let parsed = parse_input(EXAMPLE);
         assert!(parsed.is_ok(), "Failed parsing example input");
-
         let result = solve_part2(&parsed.unwrap());
         assert_eq!(result, 230);
     }
