@@ -191,3 +191,72 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     }
     sum
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | ",
+        "fdgacbe cefdb cefbgd gcbe\n",
+        "edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | ",
+        "fcgedb cgb dgebacf gc\n",
+        "fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | ",
+        "cg cg fdcagb cbg\n",
+        "fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega | ",
+        "efabcd cedba gadfec cb\n",
+        "aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga | ",
+        "gecf egdcabf bgf bfgea\n",
+        "fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf | ",
+        "gebdcfa ecba ca fadegcb\n",
+        "dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf | ",
+        "cefg dcbef fcge gbcadfe\n",
+        "bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd | ",
+        "ed bcgafe cdgba cbgef\n",
+        "egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg | ",
+        "gbdfcae bgc cg cgb\n",
+        "gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | ",
+        "fgae cfgab fg bagce\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn parse_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = parsed.unwrap();
+        // Only check 0th, 4th and last line
+        {
+            let left = [
+                "be", "cfbegad", "cbdgef", "fgaecd", "cgeb", "fdcge", "agebfd", "fecdb", "fabcd",
+                "edb",
+            ]
+            .map(|s| s.as_bytes());
+            let right = ["fdgacbe", "cefdb", "cefbgd", "gcbe"].map(|s| s.as_bytes());
+            assert_eq!(parsed[0].0, left);
+            assert_eq!(parsed[0].1, right);
+        }
+        {
+            let left = [
+                "aecbfdg", "fbg", "gf", "bafeg", "dbefa", "fcge", "gcbea", "fcaegb", "dgceab",
+                "fcbdga",
+            ]
+            .map(|s| s.as_bytes());
+            let right = ["gecf", "egdcabf", "bgf", "bfgea"].map(|s| s.as_bytes());
+            assert_eq!(parsed[4].0, left);
+            assert_eq!(parsed[4].1, right);
+        }
+        {
+            let left = [
+                "gcafb", "gcf", "dcaebfg", "ecagb", "gf", "abcdeg", "gaef", "cafbge", "fdbac",
+                "fegbdc",
+            ]
+            .map(|s| s.as_bytes());
+            let right = ["fgae", "cfgab", "fg", "bagce"].map(|s| s.as_bytes());
+            assert_eq!(parsed[9].0, left);
+            assert_eq!(parsed[9].1, right);
+        }
+    }
+
+    crate::macros::make_test_for_day!(example, EXAMPLE, 26, 61229);
+}

@@ -16,13 +16,14 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
 pub fn solve_part1(input: &SolverInput) -> u32 {
     let mut sum = 0;
 
-    let len = input.len(); // length in x and y are the same
+    let leny = input.len();
+    let lenx = input[0].len();
     for (y, line) in input.iter().enumerate() {
         for (x, value) in line.iter().enumerate() {
             let left_le = x > 0 && input[y][x - 1] <= *value;
-            let right_le = x + 1 < len && input[y][x + 1] <= *value;
+            let right_le = x + 1 < lenx && input[y][x + 1] <= *value;
             let up_le = y > 0 && input[y - 1][x] <= *value;
-            let down_le = y + 1 < len && input[y + 1][x] <= *value;
+            let down_le = y + 1 < leny && input[y + 1][x] <= *value;
             if left_le || right_le || up_le || down_le {
                 continue;
             } else {
@@ -34,7 +35,8 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
 }
 
 pub fn solve_part2(input: &SolverInput) -> u32 {
-    let len = input.len();
+    let leny = input.len();
+    let lenx = input[0].len();
     let mut position_to_basin = HashMap::new();
     let mut basin_it = 0;
     for (y, line) in input.iter().enumerate() {
@@ -56,7 +58,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
                             positions.push_back((x - 1, y));
                         }
                     }
-                    if x + 1 < len {
+                    if x + 1 < lenx {
                         let to_right = input[y][x + 1];
                         if to_right != b'9' && !position_to_basin.contains_key(&(x + 1, y)) {
                             positions.push_back((x + 1, y));
@@ -68,7 +70,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
                             positions.push_back((x, y - 1));
                         }
                     }
-                    if y + 1 < len {
+                    if y + 1 < leny {
                         let to_down = input[y + 1][x];
                         if to_down != b'9' && !position_to_basin.contains_key(&(x, y + 1)) {
                             positions.push_back((x, y + 1));
@@ -92,4 +94,32 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
         .rev()
         .take(3)
         .fold(1, |acc, v| acc * *v)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    const EXAMPLE: &[u8] = concat!(
+        "2199943210\n",
+        "3987894921\n",
+        "9856789892\n",
+        "8767896789\n",
+        "9899965678\n",
+    ).as_bytes();
+
+    #[test]
+    fn parse_example() {
+        let parsed = parse_input(EXAMPLE);
+        assert!(parsed.is_ok(), "Failed parsing example input");
+        assert_eq!(parsed.unwrap(), [
+            b"2199943210",
+            b"3987894921",
+            b"9856789892",
+            b"8767896789",
+            b"9899965678",
+        ]);
+    }
+
+    crate::macros::make_test_for_day!(example, EXAMPLE, 15, 1134);
 }
