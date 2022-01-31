@@ -1,3 +1,71 @@
+#[macro_export]
+macro_rules! _run_day_part_preparsed {
+    ($day:literal, $part:literal, $parsed:expr) => {
+        {
+            use paste::paste;
+            
+            paste!{
+                println!(
+                    concat!(
+                        "Day ",
+                        $day,
+                        " Part ",
+                        $part,
+                        ": {}",
+                    ), 
+                    [<day $day >]::[< solve_part $part>](&$parsed),
+                );
+            }
+        }
+    }
+}
+pub use _run_day_part_preparsed;
+
+#[macro_export]
+macro_rules! run_day_p1 {
+    ($day:literal) => {
+        {
+            use paste::paste;
+
+            paste! {
+                let input = include_bytes!(concat!(
+                    "../input/",
+                    stringify!($day),
+                    "/input.txt",
+                ));
+                let parsed = [<day $day>]::parse_input(input).expect(concat!(
+                    "Failed to parse input file for day ",
+                    stringify!($day),
+                ));
+                crate::macros::_run_day_part_preparsed!($day, 1, parsed);
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! run_day {
+    ($day:literal) => {
+        {
+            use paste::paste;
+
+            paste! {
+                let input = include_bytes!(concat!(
+                    "../input/",
+                    stringify!($day),
+                    "/input.txt",
+                ));
+                let parsed = [<day $day>]::parse_input(input).expect(concat!(
+                    "Failed to parse input file for day ",
+                    stringify!($day),
+                ));
+                crate::macros::_run_day_part_preparsed!($day, 1, parsed);
+                crate::macros::_run_day_part_preparsed!($day, 2, parsed);
+            }
+        }
+    };
+}
+
 #[cfg(test)]
 pub mod test {
     #[macro_export]
