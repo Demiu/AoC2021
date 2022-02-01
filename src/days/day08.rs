@@ -222,9 +222,7 @@ mod test {
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let parsed = parsed.unwrap();
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
         // Only check 0th, 4th and last line
         {
             let left = [

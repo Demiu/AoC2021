@@ -106,19 +106,22 @@ mod test {
         "9856789892\n",
         "8767896789\n",
         "9899965678\n",
-    ).as_bytes();
+    )
+    .as_bytes();
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        assert_eq!(parsed.unwrap(), [
-            b"2199943210",
-            b"3987894921",
-            b"9856789892",
-            b"8767896789",
-            b"9899965678",
-        ]);
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
+        assert_eq!(
+            parsed,
+            [
+                b"2199943210",
+                b"3987894921",
+                b"9856789892",
+                b"8767896789",
+                b"9899965678",
+            ]
+        );
     }
 
     crate::macros::make_test_for_day!(example, EXAMPLE, 15, 1134);

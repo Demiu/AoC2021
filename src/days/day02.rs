@@ -82,10 +82,9 @@ mod test {
     fn parse_example() {
         use super::Command::*;
 
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
         assert_eq!(
-            parsed.unwrap(),
+            parsed,
             [Forward(5), Down(5), Forward(8), Up(3), Down(8), Forward(2)]
         )
     }

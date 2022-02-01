@@ -56,9 +56,8 @@ mod test {
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        assert_eq!(parsed.unwrap(), [0, 1, 1, 2, 1, 0, 0, 0, 0]);
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
+        assert_eq!(parsed, [0, 1, 1, 2, 1, 0, 0, 0, 0]);
     }
 
     crate::macros::make_test_for_day!(example, EXAMPLE, 5934, 26984457539);

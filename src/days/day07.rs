@@ -64,11 +64,10 @@ mod test {
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
         let mut desired = [16, 1, 2, 0, 4, 2, 7, 1, 2, 14];
         desired.sort_unstable();
-        assert_eq!(parsed.unwrap(), desired);
+        assert_eq!(parsed, desired);
     }
 
     crate::macros::make_test_for_day!(example, EXAMPLE, 37, 168);

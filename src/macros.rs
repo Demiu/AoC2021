@@ -1,70 +1,68 @@
 #[macro_export]
 macro_rules! _run_day_part_preparsed {
-    ($day:literal, $part:literal, $parsed:expr) => {
-        {
-            use paste::paste;
-            
-            paste!{
-                println!(
-                    concat!(
-                        "Day ",
-                        $day,
-                        " Part ",
-                        $part,
-                        ": {}",
-                    ), 
-                    [<day $day >]::[< solve_part $part>](&$parsed),
-                );
-            }
+    ($day:literal, $part:literal, $parsed:expr) => {{
+        use paste::paste;
+
+        paste! {
+            println!(
+                concat!(
+                    "Day ",
+                    $day,
+                    " Part ",
+                    $part,
+                    ": {}",
+                ),
+                [<day $day >]::[< solve_part $part>](&$parsed),
+            );
         }
-    }
+    }};
 }
 pub use _run_day_part_preparsed;
 
 #[macro_export]
+macro_rules! parse_expect {
+    ($from:expr) => {{
+        let parsed = parse_input($from);
+        parsed.expect("Failed parsing input")
+    }};
+    ($from:expr, $name:literal) => {{
+        let parsed = parse_input($from);
+        parsed.expect(concat!("Failed parsing ", $name, " input"))
+    }};
+    ($day:literal, $from:expr) => {{
+        use paste::paste;
+
+        paste! {
+            let parsed = [<day $day>]::parse_input($from);
+            parsed.expect(concat!(
+                "Failed to parse input file for day ",
+                $day,
+            ))
+        }
+    }};
+}
+pub use parse_expect;
+
+#[macro_export]
 macro_rules! run_day_p1 {
     ($day:literal) => {
-        {
-            use paste::paste;
-
-            paste! {
-                let input = include_bytes!(concat!(
-                    "../input/",
-                    stringify!($day),
-                    "/input.txt",
-                ));
-                let parsed = [<day $day>]::parse_input(input).expect(concat!(
-                    "Failed to parse input file for day ",
-                    stringify!($day),
-                ));
-                crate::macros::_run_day_part_preparsed!($day, 1, parsed);
-            }
-        }
+        let input = include_bytes!(concat!("../input/", stringify!($day), "/input.txt",));
+        let parsed = crate::macros::parse_expect!($day, input);
+        crate::macros::_run_day_part_preparsed!($day, 1, parsed);
     };
 }
+pub use run_day_p1;
 
 #[macro_export]
 macro_rules! run_day {
     ($day:literal) => {
-        {
-            use paste::paste;
-
-            paste! {
-                let input = include_bytes!(concat!(
-                    "../input/",
-                    stringify!($day),
-                    "/input.txt",
-                ));
-                let parsed = [<day $day>]::parse_input(input).expect(concat!(
-                    "Failed to parse input file for day ",
-                    stringify!($day),
-                ));
-                crate::macros::_run_day_part_preparsed!($day, 1, parsed);
-                crate::macros::_run_day_part_preparsed!($day, 2, parsed);
-            }
-        }
+        let input = include_bytes!(concat!("../input/", stringify!($day), "/input.txt",));
+        let parsed = crate::macros::parse_expect!($day, input);
+        crate::macros::_run_day_part_preparsed!($day, 1, parsed);
+        crate::macros::_run_day_part_preparsed!($day, 2, parsed);
     };
 }
+pub use run_day;
 
 #[cfg(test)]
 pub mod test {
@@ -76,17 +74,15 @@ pub mod test {
             paste! {
                 #[test]
                 fn [< solve_part1_ $name >] () {
-                    let parsed = parse_input($input);
-                    assert!(parsed.is_ok(), "Failed parsing example input");
-                    let result = solve_part1(&parsed.unwrap());
+                    let parsed = crate::macros::parse_expect!($input);
+                    let result = solve_part1(&parsed);
                     assert_eq!(result, $p1);
                 }
 
                 #[test]
                 fn [< solve_part2_ $name >] () {
-                    let parsed = parse_input($input);
-                    assert!(parsed.is_ok(), "Failed parsing example input");
-                    let result = solve_part2(&parsed.unwrap());
+                    let parsed = crate::macros::parse_expect!($input);
+                    let result = solve_part2(&parsed);
                     assert_eq!(result, $p2);
                 }
             }

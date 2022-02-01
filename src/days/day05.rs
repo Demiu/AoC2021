@@ -419,9 +419,7 @@ mod test {
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let parsed = parsed.unwrap();
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
         assert_eq!(
             parsed[0],
             Line::Horizontal(HorizontalLine { xs: 0..=5, y: 9 })

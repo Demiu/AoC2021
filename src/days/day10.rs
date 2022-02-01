@@ -109,13 +109,12 @@ mod test {
         "[<(<(<(<{}))><([]([]()\n",
         "<{([([[(<>()){}]>(<<{{\n",
         "<{([{{}}[<[[[<>{}]]]>[]]\n",
-    ).as_bytes();
+    )
+    .as_bytes();
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let parsed = parsed.unwrap();
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
 
         assert_eq!(parsed[2], Line::Corrupted(1197));
         assert_eq!(parsed[4], Line::Corrupted(3));
@@ -123,7 +122,7 @@ mod test {
         assert_eq!(parsed[7], Line::Corrupted(3));
         assert_eq!(parsed[8], Line::Corrupted(25137));
         for i in 0..parsed.len() {
-            if let Ok(_) = [2,4,5,7,8].binary_search(&i) {
+            if let Ok(_) = [2, 4, 5, 7, 8].binary_search(&i) {
                 continue;
             }
             assert!(matches!(parsed[i], Line::Incomplete(_)));
@@ -134,15 +133,11 @@ mod test {
 
     #[test]
     fn part2_example_scores() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let parsed = parsed.unwrap();
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
 
-        let get_incomplete = |idx| {
-            match &parsed[idx] {
-                Line::Incomplete(v) => v,
-                _ => panic!("Trying to extract not from an incomplete line"),
-            }
+        let get_incomplete = |idx| match &parsed[idx] {
+            Line::Incomplete(v) => v,
+            _ => panic!("Trying to extract not from an incomplete line"),
         };
 
         assert_eq!(autocomplete_score(&get_incomplete(0)), 288957);

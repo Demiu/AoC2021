@@ -193,20 +193,17 @@ mod test {
 
     #[test]
     fn parse_example_draws() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
         let desired_draws = [
             7, 4, 9, 5, 11, 17, 23, 2, 0, 14, 21, 24, 10, 16, 13, 6, 15, 25, 12, 22, 18, 20, 8, 19,
             3, 26, 1,
         ];
-        assert_eq!(parsed.unwrap().draws, desired_draws);
+        assert_eq!(parsed.draws, desired_draws);
     }
 
     #[test]
     fn parse_example_boards() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        let parsed = parsed.unwrap();
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
 
         let desired_boards = [
             [

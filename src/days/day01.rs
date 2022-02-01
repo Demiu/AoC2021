@@ -45,12 +45,8 @@ mod test {
 
     #[test]
     fn parse_example() {
-        let parsed = parse_input(EXAMPLE);
-        assert!(parsed.is_ok(), "Failed parsing example input");
-        assert_eq!(
-            parsed.unwrap(),
-            [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
-        );
+        let parsed = crate::macros::parse_expect!(EXAMPLE, "example");
+        assert_eq!(parsed, [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]);
     }
 
     crate::macros::make_test_for_day!(example, EXAMPLE, 7, 5);
