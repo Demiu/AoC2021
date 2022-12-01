@@ -79,8 +79,7 @@ impl Element {
             Element::Number(n) => {
                 if *n >= 10 {
                     let left = Box::new(Element::Number(*n / 2));
-                    let right =
-                        Box::new(Element::Number(*n / 2 + (*n % 2)));
+                    let right = Box::new(Element::Number(*n / 2 + (*n % 2)));
                     *self = Element::NestedPair { left, right };
                     true
                 } else {

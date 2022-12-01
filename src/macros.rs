@@ -45,8 +45,14 @@ pub use parse_expect;
 
 #[macro_export]
 macro_rules! run_day_p1 {
-    ($day:literal) => {
-        let input = include_bytes!(concat!("../input/", stringify!($day), "/input.txt",));
+    ($year:literal, $day:literal) => {
+        let input = include_bytes!(concat!(
+            "../input/",
+            stringify!($year),
+            "/",
+            stringify!($day),
+            "/input.txt",
+        ));
         let parsed = parse_expect!($day, input);
         _run_day_part_preparsed!($day, 1, parsed);
     };
@@ -55,8 +61,14 @@ pub use run_day_p1;
 
 #[macro_export]
 macro_rules! run_day {
-    ($day:literal) => {
-        let input = include_bytes!(concat!("../input/", stringify!($day), "/input.txt",));
+    ($year:literal, $day:literal) => {
+        let input = include_bytes!(concat!(
+            "../input/",
+            stringify!($year),
+            "/",
+            stringify!($day),
+            "/input.txt",
+        ));
         let parsed = parse_expect!($day, input);
         _run_day_part_preparsed!($day, 1, parsed);
         _run_day_part_preparsed!($day, 2, parsed);
