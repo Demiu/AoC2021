@@ -1,4 +1,4 @@
-use std::{collections::BinaryHeap, convert::identity, iter::FromIterator, ops::Deref};
+use std::{collections::BinaryHeap, convert::identity, iter::FromIterator};
 
 use anyhow::{anyhow, Result};
 use nom::{bytes::complete::tag, multi::separated_list1};
@@ -27,7 +27,8 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
 
 pub fn solve_part2(input: &SolverInput) -> u32 {
     let mut heap = BinaryHeap::from_iter(input.iter().cloned());
-    IntoIterator::into_iter([heap.pop(), heap.pop(), heap.pop()])
+    [heap.pop(), heap.pop(), heap.pop()]
+        .into_iter()
         .filter_map(identity)
         .take(3)
         .sum()
