@@ -175,3 +175,68 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     }
     found_paths
 }
+
+#[cfg(test)]
+mod test {
+    use nom::AsBytes;
+
+    use super::*;
+
+    const EXAMPLE_SMALL: &[u8] = concat!(
+        "start-A\n",
+        "start-b\n",
+        "A-c\n",
+        "A-b\n",
+        "b-d\n",
+        "A-end\n",
+        "b-end\n",
+    )
+    .as_bytes();
+
+    #[test]
+    fn parse_example_small() {
+        let parsed = crate::macros::parse_expect!(EXAMPLE_SMALL, "small example");
+        {
+            let from = parsed
+                .get(&compute_identifier(b"start".as_bytes()))
+                .expect("No paths originating from start");
+            assert!(matches!(from.kind, Cave::Start));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"A".as_bytes())));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"b".as_bytes())));
+        }
+        {
+            let from = parsed
+                .get(&compute_identifier(b"end".as_bytes()))
+                .expect("No paths originating from A");
+            assert!(matches!(from.kind, Cave::End));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"A".as_bytes())));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"b".as_bytes())));
+        }
+        {
+            let from = parsed
+                .get(&compute_identifier(b"A".as_bytes()))
+                .expect("No paths originating from A");
+            assert!(matches!(from.kind, Cave::Big));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"c".as_bytes())));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"b".as_bytes())));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"start".as_bytes())));
+            assert!(from
+                .connections
+                .contains(&compute_identifier(b"end".as_bytes())));
+        }
+    }
+}

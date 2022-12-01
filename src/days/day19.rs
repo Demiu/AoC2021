@@ -52,7 +52,7 @@ const REQUIRED_BEACON_MATCHES: usize = 12;
 // that's (12 choose 2) combinations = 66
 const REQUIRED_METADATA_MATCHES: usize = 66;
 
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Point {
     x: i32,
     y: i32,

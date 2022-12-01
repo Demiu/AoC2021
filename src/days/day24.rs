@@ -17,7 +17,7 @@ type SolverInput = [Instruction];
 
 const INPUT_LENGTH: usize = 14;
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum Register {
     W,
     X,

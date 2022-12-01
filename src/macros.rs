@@ -47,8 +47,8 @@ pub use parse_expect;
 macro_rules! run_day_p1 {
     ($day:literal) => {
         let input = include_bytes!(concat!("../input/", stringify!($day), "/input.txt",));
-        let parsed = crate::macros::parse_expect!($day, input);
-        crate::macros::_run_day_part_preparsed!($day, 1, parsed);
+        let parsed = parse_expect!($day, input);
+        _run_day_part_preparsed!($day, 1, parsed);
     };
 }
 pub use run_day_p1;
@@ -57,9 +57,9 @@ pub use run_day_p1;
 macro_rules! run_day {
     ($day:literal) => {
         let input = include_bytes!(concat!("../input/", stringify!($day), "/input.txt",));
-        let parsed = crate::macros::parse_expect!($day, input);
-        crate::macros::_run_day_part_preparsed!($day, 1, parsed);
-        crate::macros::_run_day_part_preparsed!($day, 2, parsed);
+        let parsed = parse_expect!($day, input);
+        _run_day_part_preparsed!($day, 1, parsed);
+        _run_day_part_preparsed!($day, 2, parsed);
     };
 }
 pub use run_day;

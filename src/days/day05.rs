@@ -15,31 +15,31 @@ pub struct Point {
     y: u32,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct HorizontalLine {
     xs: RangeInclusive<u32>,
     y: u32,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct VerticalLine {
     x: u32,
     ys: RangeInclusive<u32>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct DiagonalLineInc {
     start: Point,
     length: u32,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct DiagonalLineDec {
     start: Point,
     length: u32,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Line {
     Horizontal(HorizontalLine),
     Vertical(VerticalLine),

@@ -3,7 +3,7 @@ use anyhow::{bail, Result};
 type ParserOutput = Vec<Command>;
 type SolverInput = [Command];
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Command {
     Down(u8),
     Forward(u8),

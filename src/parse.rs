@@ -11,9 +11,9 @@ use nom::{
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
     Some(match character {
-        ch @ (b'0'..=b'9') => (ch - b'0'),
-        ch @ (b'a'..=b'f') => (ch - b'a' + 10),
-        ch @ (b'A'..=b'F') => (ch - b'A' + 10),
+        ch @ (b'0'..=b'9') => ch - b'0',
+        ch @ (b'a'..=b'f') => ch - b'a' + 10,
+        ch @ (b'A'..=b'F') => ch - b'A' + 10,
         _ => return None,
     })
 }

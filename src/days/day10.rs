@@ -8,7 +8,7 @@ use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterato
 type ParserOutput = Vec<Line>;
 type SolverInput = [Line];
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Line {
     Incomplete(Vec<u8>),
     Corrupted(u32),

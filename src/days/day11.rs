@@ -101,7 +101,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
 
 #[cfg(test)]
 mod test {
-    use ndarray::ArrayView;
+    use ndarray::{ArrayView, Axis};
 
     use super::*;
 
@@ -126,23 +126,23 @@ mod test {
     fn parse_example_small() {
         let parsed = crate::macros::parse_expect!(EXAMPLE_SMALL, "small example");
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 0),
+            parsed.index_axis(Axis(0), 0),
             ArrayView::from(&[1, 1, 1, 1, 1])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 1),
+            parsed.index_axis(Axis(0), 1),
             ArrayView::from(&[1, 9, 9, 9, 1])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 2),
+            parsed.index_axis(Axis(0), 2),
             ArrayView::from(&[1, 9, 1, 9, 1])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 3),
+            parsed.index_axis(Axis(0), 3),
             ArrayView::from(&[1, 9, 9, 9, 1])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 4),
+            parsed.index_axis(Axis(0), 4),
             ArrayView::from(&[1, 1, 1, 1, 1])
         );
     }
@@ -153,29 +153,29 @@ mod test {
         // only check the first 3 lines
         step(&mut parsed);
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 0),
+            parsed.index_axis(Axis(0), 0),
             ArrayView::from(&[3, 4, 5, 4, 3])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 1),
+            parsed.index_axis(Axis(0), 1),
             ArrayView::from(&[4, 0, 0, 0, 4])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 2),
+            parsed.index_axis(Axis(0), 2),
             ArrayView::from(&[5, 0, 0, 0, 5])
         );
         // only check the last 3 lines
         step(&mut parsed);
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 2),
+            parsed.index_axis(Axis(0), 2),
             ArrayView::from(&[6, 1, 1, 1, 6])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 3),
+            parsed.index_axis(Axis(0), 3),
             ArrayView::from(&[5, 1, 1, 1, 5])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 4),
+            parsed.index_axis(Axis(0), 4),
             ArrayView::from(&[4, 5, 6, 5, 4])
         );
     }
@@ -185,19 +185,19 @@ mod test {
         let parsed = crate::macros::parse_expect!(EXAMPLE_LARGE, "large example");
         // cherrypick lines
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 0),
+            parsed.index_axis(Axis(0), 0),
             ArrayView::from(&[5, 4, 8, 3, 1, 4, 3, 2, 2, 3])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 3),
+            parsed.index_axis(Axis(0), 3),
             ArrayView::from(&[6, 1, 4, 1, 3, 3, 6, 1, 4, 6])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 6),
+            parsed.index_axis(Axis(0), 6),
             ArrayView::from(&[2, 1, 7, 6, 8, 4, 1, 7, 2, 1])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 9),
+            parsed.index_axis(Axis(0), 9),
             ArrayView::from(&[5, 2, 8, 3, 7, 5, 1, 5, 2, 6])
         );
     }
@@ -208,28 +208,28 @@ mod test {
         // cherrypick lines
         step(&mut parsed);
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 1),
+            parsed.index_axis(Axis(0), 1),
             ArrayView::from(&[3, 8, 5, 6, 9, 6, 5, 8, 2, 2])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 4),
+            parsed.index_axis(Axis(0), 4),
             ArrayView::from(&[7, 4, 6, 8, 4, 9, 6, 5, 8, 9])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 7),
+            parsed.index_axis(Axis(0), 7),
             ArrayView::from(&[7, 9, 9, 3, 9, 9, 2, 2, 4, 5])
         );
         step(&mut parsed);
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 0),
+            parsed.index_axis(Axis(0), 0),
             ArrayView::from(&[8, 8, 0, 7, 4, 7, 6, 5, 5, 5])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 4),
+            parsed.index_axis(Axis(0), 4),
             ArrayView::from(&[8, 7, 0, 0, 9, 0, 8, 8, 0, 0])
         );
         assert_eq!(
-            parsed.index_axis(ndarray::Axis(0), 8),
+            parsed.index_axis(Axis(0), 8),
             ArrayView::from(&[9, 0, 0, 0, 0, 0, 0, 8, 7, 6])
         );
     }

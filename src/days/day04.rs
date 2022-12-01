@@ -31,7 +31,7 @@ impl BingoBoard {
     fn sum_unmarked(&self) -> u32 {
         self.grid
             .iter()
-            .filter_map(|c| (!c.1).then(|| c.0 as u32))
+            .filter_map(|c| (!c.1).then_some(c.0 as u32))
             .sum()
     }
 
