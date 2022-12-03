@@ -9,7 +9,7 @@ use years::year2022::*;
 fn main() {
     macros::run_day!(2022, 01);
     macros::run_day!(2022, 02);
-    //macros::run_day!(03);
+    macros::run_day!(2022, 03);
     //macros::run_day!(04);
     //macros::run_day!(05);
     //macros::run_day!(06);

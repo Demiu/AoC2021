@@ -1,6 +1,4 @@
-use std::io::BufRead;
-
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 
 type ParserOutput = Vec<(u8, u8)>;
 type SolverInput = [(u8, u8)];
