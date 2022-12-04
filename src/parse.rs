@@ -1,4 +1,4 @@
-use std::ops::{AddAssign, Mul, MulAssign, RangeInclusive};
+use std::ops::{AddAssign, Mul, MulAssign, Neg, RangeInclusive};
 
 use nom::{
     bytes::complete::tag,
@@ -6,7 +6,7 @@ use nom::{
     combinator::{map_opt, opt},
     error::{ErrorKind, ParseError},
     sequence::separated_pair,
-    Err, IResult,
+    Err, IResult
 };
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
@@ -20,8 +20,7 @@ pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
 
 fn parse_unsigned_radix<U>(input: &[u8], radix: u8) -> Option<U>
 where
-    u8: Into<U>,
-    U: AddAssign<U> + MulAssign<U>,
+    U: AddAssign<U> + MulAssign<U> + From<u8>,
 {
     let mut index = 0;
     let mut number = 0.into();
@@ -43,36 +42,36 @@ where
 pub fn unsigned_parser_radix<'a, U, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], U, E>
 where
     E: ParseError<&'a [u8]>,
-    U: AddAssign<U> + MulAssign<U>,
-    u8: Into<U>,
+    U: AddAssign<U> + MulAssign<U> + From<u8>,
 {
     map_opt(digit1, move |digits| parse_unsigned_radix(digits, radix))
 }
 
 pub fn parse_unsigned<U>(input: &[u8]) -> IResult<&[u8], U>
 where
-    U: AddAssign<U> + MulAssign<U>,
-    u8: Into<U>,
+    U: AddAssign<U> + MulAssign<U> + From<u8>,
 {
     unsigned_parser_radix(10)(input)
 }
 
-#[allow(dead_code)]
-pub fn parse_range_unsigned<U>(input: &[u8]) -> IResult<&[u8], RangeInclusive<U>>
+pub fn parse_range_unsigned<'a, S, U>(
+    mut sep: S,
+) -> impl (FnMut(&'a [u8]) -> IResult<&'a [u8], RangeInclusive<U>>)
 where
-    U: AddAssign<U> + MulAssign<U>,
-    u8: Into<U>,
+    U: AddAssign<U> + MulAssign<U> + From<u8>,
+    S: FnMut(&'a [u8]) -> IResult<&'a [u8], &'a [u8]>,
 {
-    let (rest, (from, to)) = separated_pair(parse_unsigned, tag(b".."), parse_unsigned)(input)?;
-    Ok((rest, from..=to))
+    move |input| {
+        let (rest, (from, to)) = separated_pair(parse_unsigned, &mut sep, parse_unsigned)(input)?;
+        Ok((rest, from..=to))
+    }
 }
 
+#[allow(dead_code)]
 pub fn signed_parser_radix<'a, I, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], I, E>
 where
     E: ParseError<&'a [u8]>,
-    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I>,
-    u8: Into<I>,
-    i8: Into<I>,
+    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I> + From<u8> + Neg<Output = I>,
 {
     move |input| {
         if input.is_empty() {
@@ -92,31 +91,23 @@ where
             (true, input)
         };
         map_opt(digit1, move |digits| {
-            parse_unsigned_radix(digits, radix).map(|u| {
-                u * if positive {
-                    (1i8).into()
-                } else {
-                    (-1i8).into()
-                }
-            })
+            parse_unsigned_radix(digits, radix).map(|u: I| if positive { u } else { -u })
         })(sub_input)
     }
 }
 
+#[allow(dead_code)]
 pub fn parse_signed<I>(input: &[u8]) -> IResult<&[u8], I>
 where
-    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I>,
-    u8: Into<I>,
-    i8: Into<I>,
+    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I> + From<u8> + Neg<Output = I>,
 {
     signed_parser_radix(10)(input)
 }
 
+#[allow(dead_code)]
 pub fn parse_range_signed<I>(input: &[u8]) -> IResult<&[u8], RangeInclusive<I>>
 where
-    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I>,
-    u8: Into<I>,
-    i8: Into<I>,
+    I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I> + From<u8> + Neg<Output = I>,
 {
     let (rest, (from, to)) = separated_pair(parse_signed, tag(b".."), parse_signed)(input)?;
     Ok((rest, from..=to))
