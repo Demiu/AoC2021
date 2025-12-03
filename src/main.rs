@@ -11,7 +11,7 @@ fn main() {
     macros::run_day!(2022, 02);
     macros::run_day!(2022, 03);
     macros::run_day!(2022, 04);
-    //macros::run_day!(05);
+    macros::run_day!(2022, 05);
     //macros::run_day!(06);
     //macros::run_day!(07);
     //macros::run_day!(08);

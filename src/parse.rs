@@ -6,7 +6,7 @@ use nom::{
     combinator::{map_opt, opt},
     error::{ErrorKind, ParseError},
     sequence::separated_pair,
-    Err, IResult
+    Err, IResult,
 };
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
