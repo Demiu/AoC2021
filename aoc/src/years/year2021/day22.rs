@@ -1,6 +1,6 @@
 use std::ops::RangeInclusive;
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use nom::{
     branch::alt,
     bytes::complete::tag,

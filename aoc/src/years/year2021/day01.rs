@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;

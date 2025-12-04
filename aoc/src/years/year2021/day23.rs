@@ -1,6 +1,6 @@
 use std::cmp::Reverse;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{
     branch::alt, bytes::streaming::tag, combinator::map_opt, multi::separated_list1,
     sequence::preceded,

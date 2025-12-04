@@ -1,11 +1,11 @@
 use std::collections::HashSet;
 
-use anyhow::{anyhow, bail, Result};
+use anyhow::{Result, anyhow, bail};
 use nom::{
+    IResult,
     bytes::complete::tag,
     multi::{many1, separated_list1},
     sequence::separated_pair,
-    IResult,
 };
 
 type SolverInput = (Vec<bool>, Image);

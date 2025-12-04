@@ -1,12 +1,12 @@
 use std::collections::HashSet;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::tag,
     multi::separated_list1,
     sequence::{preceded, separated_pair},
-    IResult,
 };
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
@@ -195,10 +195,10 @@ impl Alu {
     ) -> &'a [Instruction] {
         let mut input = Some(input);
         for (i, ins) in instructions.iter().enumerate() {
-            if input.is_none() {
-                if let Instruction::Inp(_) = ins {
-                    return &instructions[i..];
-                }
+            if input.is_none()
+                && let Instruction::Inp(_) = ins
+            {
+                return &instructions[i..];
             }
             let _ = self.run_instruction(*ins, &mut input);
         }

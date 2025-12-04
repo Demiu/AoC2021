@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use ndarray::Array2;
 use nom::{
     bytes::complete::tag, character::complete::digit1, error::Error, multi::separated_list1,

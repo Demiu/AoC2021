@@ -1,12 +1,12 @@
 use std::ops::{AddAssign, Mul, MulAssign, Neg, RangeInclusive};
 
 use nom::{
+    Err, IResult,
     bytes::complete::tag,
     character::complete::{digit1, one_of},
     combinator::{map_opt, opt},
     error::{ErrorKind, ParseError},
     sequence::separated_pair,
-    Err, IResult,
 };
 
 pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
@@ -32,11 +32,7 @@ where
         number += value.into();
         index += 1;
     }
-    if index == 0 {
-        None
-    } else {
-        Some(number)
-    }
+    if index == 0 { None } else { Some(number) }
 }
 
 pub fn unsigned_parser_radix<'a, U, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], U, E>

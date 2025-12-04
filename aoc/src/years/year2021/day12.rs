@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use nom::{
     bytes::complete::tag, character::complete::alpha0, error::Error, multi::separated_list1,
     sequence::separated_pair,
@@ -8,7 +8,7 @@ use nom::{
 
 type SolverInput = HashMap<u32, Node>;
 
-const START_ID: u32 = compute_identifier(&[b's', b't', b'a', b'r', b't']);
+const START_ID: u32 = compute_identifier(b"start");
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 enum Cave {
@@ -102,8 +102,7 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
         paths.push(first_path);
     }
 
-    while !paths.is_empty() {
-        let path = paths.pop().unwrap();
+    while let Some(path) = paths.pop() {
         for other_id in input[&path.last_identifier].connections.iter() {
             let other_node = &input[other_id];
             if other_node.kind == Cave::End {
@@ -142,8 +141,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
         paths.push(first_path);
     }
 
-    while !paths.is_empty() {
-        let path = paths.pop().unwrap();
+    while let Some(path) = paths.pop() {
         for other_id in input[&path.last_identifier].connections.iter() {
             let other_node = &input[other_id];
             if other_node.kind == Cave::End {
@@ -201,42 +199,50 @@ mod test {
                 .get(&compute_identifier(b"start".as_bytes()))
                 .expect("No paths originating from start");
             assert!(matches!(from.kind, Cave::Start));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"A".as_bytes())));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"b".as_bytes())));
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"A".as_bytes()))
+            );
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"b".as_bytes()))
+            );
         }
         {
             let from = parsed
                 .get(&compute_identifier(b"end".as_bytes()))
                 .expect("No paths originating from A");
             assert!(matches!(from.kind, Cave::End));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"A".as_bytes())));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"b".as_bytes())));
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"A".as_bytes()))
+            );
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"b".as_bytes()))
+            );
         }
         {
             let from = parsed
                 .get(&compute_identifier(b"A".as_bytes()))
                 .expect("No paths originating from A");
             assert!(matches!(from.kind, Cave::Big));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"c".as_bytes())));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"b".as_bytes())));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"start".as_bytes())));
-            assert!(from
-                .connections
-                .contains(&compute_identifier(b"end".as_bytes())));
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"c".as_bytes()))
+            );
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"b".as_bytes()))
+            );
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"start".as_bytes()))
+            );
+            assert!(
+                from.connections
+                    .contains(&compute_identifier(b"end".as_bytes()))
+            );
         }
     }
 }

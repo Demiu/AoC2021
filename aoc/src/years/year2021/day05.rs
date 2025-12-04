@@ -1,8 +1,8 @@
 use std::{collections::HashSet, hash::Hash, ops::RangeInclusive};
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use itertools::Itertools;
-use nom::{bytes::complete::tag, multi::separated_list1, sequence::separated_pair, IResult};
+use nom::{IResult, bytes::complete::tag, multi::separated_list1, sequence::separated_pair};
 
 use crate::{parse::parse_unsigned, traits::Intersect};
 
@@ -284,7 +284,7 @@ impl Intersect<DiagonalLineInc> for DiagonalLineDec {
             }
         };
         // for decreasing lines b is constant, this allows us to deduce y
-        let y = if x > b { x - b } else { b - x };
+        let y = x.abs_diff(b);
 
         let lxs = self.start.x..=(self.start.x + self.length);
         let lys = self.start.y..=(self.start.y + self.length);
@@ -325,11 +325,7 @@ impl Intersect for Line {
 }
 
 fn make_range(one: u32, two: u32) -> RangeInclusive<u32> {
-    if one <= two {
-        one..=two
-    } else {
-        two..=one
-    }
+    if one <= two { one..=two } else { two..=one }
 }
 
 pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {

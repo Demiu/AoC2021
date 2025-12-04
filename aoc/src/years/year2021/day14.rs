@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{
     bytes::complete::tag, character::complete::alpha1, error::Error, multi::separated_list1,
     sequence::separated_pair,

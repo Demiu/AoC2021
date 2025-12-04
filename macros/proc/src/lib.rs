@@ -12,17 +12,28 @@ impl Parse for RunYearArgs {
         let year_lit = input.parse()?;
         let year = match year_lit {
             Lit::Int(i) => i.base10_digits().to_owned(),
-            _ => return Err(syn::Error::new(year_lit.span(), "Expected integer for year")),
+            _ => {
+                return Err(syn::Error::new(
+                    year_lit.span(),
+                    "Expected integer for year",
+                ));
+            }
         };
 
         input.parse::<Token![,]>()?;
 
         let day_lit = input.parse()?;
         let Lit::Int(last_day) = day_lit else {
-            return Err(syn::Error::new(day_lit.span(), "Expected integer for last day"));
+            return Err(syn::Error::new(
+                day_lit.span(),
+                "Expected integer for last day",
+            ));
         };
         if !last_day.suffix().is_empty() {
-            return Err(syn::Error::new(last_day.span(), format!("Expected unsuffixed integer for last day, got {}", last_day)));
+            return Err(syn::Error::new(
+                last_day.span(),
+                format!("Expected unsuffixed integer for last day, got {}", last_day),
+            ));
         }
 
         Ok(RunYearArgs { year, last_day })
@@ -31,11 +42,8 @@ impl Parse for RunYearArgs {
 
 #[proc_macro]
 pub fn run_year(input: TokenStream) -> TokenStream {
-    let RunYearArgs{
-        year,
-        last_day
-    } = parse_macro_input!(input as RunYearArgs);
-    
+    let RunYearArgs { year, last_day } = parse_macro_input!(input as RunYearArgs);
+
     let module_ident = syn::Ident::new(&format!("year{}", year), proc_macro2::Span::call_site());
 
     let expanded = quote! {
@@ -47,9 +55,9 @@ pub fn run_year(input: TokenStream) -> TokenStream {
             seq!(D in 01..=#last_day {
                 let input = include_bytes!(concat!(
                     "../../input/",
-                    #year, 
+                    #year,
                     "/",
-                    stringify!(D), 
+                    stringify!(D),
                     "/input.txt"
                 ));
                 let parsed = parse_expect!(D, input);

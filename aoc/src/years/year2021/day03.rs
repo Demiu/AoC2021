@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{bytes::complete::tag, character::complete::digit1, multi::separated_list1};
 
 use crate::parse::unsigned_parser_radix;

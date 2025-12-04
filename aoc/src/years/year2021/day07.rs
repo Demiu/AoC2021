@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;
@@ -8,11 +8,7 @@ type SolverInput = [u32];
 
 // u32::abs_diff is nightly :(
 fn abs_diff(l: u32, r: u32) -> u32 {
-    if l > r {
-        l - r
-    } else {
-        r - l
-    }
+    l.abs_diff(r)
 }
 
 pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {

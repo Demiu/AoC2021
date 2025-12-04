@@ -3,10 +3,10 @@ use std::{cmp::max, fmt::Display, ops::Add};
 use anyhow::Result;
 use itertools::Itertools;
 use nom::{
+    IResult,
     bytes::complete::tag,
     multi::separated_list1,
     sequence::{delimited, separated_pair},
-    IResult,
 };
 
 use crate::parse::parse_unsigned;

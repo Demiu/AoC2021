@@ -1,6 +1,6 @@
 use std::ops::RangeInclusive;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{
     bytes::complete::tag, character::complete::newline, multi::separated_list1,
     sequence::separated_pair,
@@ -13,16 +13,15 @@ type ParserOutput = Vec<ElfPair>;
 type SolverInput = [ElfPair];
 
 fn ranges_full_overlap(l: &RangeInclusive<u8>, r: &RangeInclusive<u8>) -> bool {
-    match (
-        l.start() > r.start(),
-        l.start() == r.start(),
-        l.end() < r.end(),
-        l.end() == r.end(),
-    ) {
-        (true, false, false, false) => false,
-        (false, false, true, false) => false,
-        _ => true,
-    }
+    !matches!(
+        (
+            l.start() > r.start(),
+            l.start() == r.start(),
+            l.end() < r.end(),
+            l.end() == r.end(),
+        ),
+        (true, false, false, false) | (false, false, true, false)
+    )
 }
 
 fn ranges_overlap(l: &RangeInclusive<u8>, r: &RangeInclusive<u8>) -> bool {

@@ -1,4 +1,4 @@
-use std::collections::{hash_map::RandomState, HashSet};
+use std::collections::{HashSet, hash_map::RandomState};
 
 use anyhow::Result;
 
@@ -16,7 +16,7 @@ fn ascii_to_priority(c: u8) -> Option<i32> {
 pub fn parse_input<'a>(file: &'a [u8]) -> Result<ParserOutput<'a>> {
     Ok(file
         .split(|c| *c == b'\n')
-        .filter(|line| line.len() > 0)
+        .filter(|line| !line.is_empty())
         .collect())
 }
 
@@ -40,7 +40,7 @@ pub fn solve_part2(input: &SolverInput) -> i32 {
         .chunks(3)
         .map(|chunk| {
             chunk
-                .into_iter()
+                .iter()
                 .map(|&line| HashSet::<_, RandomState>::from_iter(line.iter().copied()))
                 .reduce(|hs1, hs2| hs1.intersection(&hs2).copied().collect())
                 .and_then(|hs| hs.iter().map(|&c| ascii_to_priority(c)).sum())

@@ -1,12 +1,12 @@
 use std::fmt::Display;
 
-use anyhow::{anyhow, Context, Result};
-use ndarray::{iter::AxisIterMut, parallel::prelude::*, Array2, Axis, Dim};
+use anyhow::{Context, Result, anyhow};
+use ndarray::{Array2, Axis, Dim, iter::AxisIterMut, parallel::prelude::*};
 use nom::{
+    IResult,
     branch::alt,
     bytes::complete::tag,
     multi::{many1, separated_list1},
-    IResult,
 };
 
 type SolverInput = Array2<Cell>;

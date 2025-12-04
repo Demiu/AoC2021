@@ -1,7 +1,7 @@
 use anyhow::Result;
 use nom::{
-    bytes::complete::tag, character::complete::alpha1, multi::separated_list1,
-    sequence::separated_pair, IResult,
+    IResult, bytes::complete::tag, character::complete::alpha1, multi::separated_list1,
+    sequence::separated_pair,
 };
 
 type EntryVec<'a> = Vec<&'a [u8]>;
@@ -89,7 +89,7 @@ pub fn parse_input<'a>(file: &'a [u8]) -> Result<ParserOutput<'a>> {
     fn parse_character_sequences(input: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {
         separated_list1(tag(b" "), alpha1)(input)
     }
-    fn parse_entry_line<'a> (input: &'a [u8]) -> IResult<&'a [u8], LineTuple<'a>> {
+    fn parse_entry_line<'a>(input: &'a [u8]) -> IResult<&'a [u8], LineTuple<'a>> {
         separated_pair(
             parse_character_sequences,
             tag(b" | "),

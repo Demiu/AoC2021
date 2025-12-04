@@ -3,14 +3,14 @@ use std::{
     ops::{Add, Sub},
 };
 
-use anyhow::{anyhow, Context, Result};
-use itertools::{iproduct, Itertools};
+use anyhow::{Context, Result, anyhow};
+use itertools::{Itertools, iproduct};
 use nom::{
+    IResult,
     bytes::complete::tag,
     character::complete::digit1,
     multi::separated_list1,
     sequence::{preceded, tuple},
-    IResult,
 };
 
 use crate::parse::parse_signed;

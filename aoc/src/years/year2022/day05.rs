@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{
     branch::alt,
     bytes::complete::{tag, take, take_while},
@@ -74,7 +74,7 @@ pub fn solve_part2(input: &SolverInput) -> String {
     input.1.iter().for_each(|&(count, from, to)| {
         let pivot = stacks[from].len() - count;
         let to_move = stacks[from].split_off(pivot);
-        stacks[to].extend(to_move.into_iter());
+        stacks[to].extend(to_move);
     });
     stacks
         .into_iter()

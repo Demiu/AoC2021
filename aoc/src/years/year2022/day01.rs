@@ -1,6 +1,6 @@
 use std::{collections::BinaryHeap, convert::identity, iter::FromIterator};
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use nom::{bytes::complete::tag, multi::separated_list1};
 
 use crate::parse::parse_unsigned;
@@ -29,7 +29,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     let mut heap = BinaryHeap::from_iter(input.iter().cloned());
     [heap.pop(), heap.pop(), heap.pop()]
         .into_iter()
-        .filter_map(identity)
+        .flatten()
         .take(3)
         .sum()
 }

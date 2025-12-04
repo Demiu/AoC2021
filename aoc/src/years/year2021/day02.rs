@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 
 type ParserOutput = Vec<Command>;
 type SolverInput = [Command];

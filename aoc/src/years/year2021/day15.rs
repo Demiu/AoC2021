@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, collections::HashMap};
 
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use ndarray::Array2;
 use nom::{
     bytes::complete::tag, character::complete::digit1, error::Error, multi::separated_list1,
