@@ -1,16 +1,11 @@
-[package]
-name = "aoc2021"
-version = "0.1.0"
-edition = "2021"
+[workspace]
+resolver = "3"
+members=[
+    "aoc",
+    "macros/proc",
+    "macros/rules"
+]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-anyhow = "1.0"
-atoi = "0.4"
-ndarray = { version="0.15", features=["rayon"] }
-nom = "7"
-itertools = "0.10"
-paste = "1.0"
-priority-queue = "1.2"
-rayon = "1.5"
+[workspace.dependencies]
+proc = { path = "macros/proc" }
+rules = { path = "macros/rules" }
