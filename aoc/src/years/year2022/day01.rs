@@ -1,4 +1,4 @@
-use std::{collections::BinaryHeap, convert::identity, iter::FromIterator};
+use std::{collections::BinaryHeap, iter::FromIterator};
 
 use anyhow::{Result, anyhow};
 use nom::{bytes::complete::tag, multi::separated_list1};
