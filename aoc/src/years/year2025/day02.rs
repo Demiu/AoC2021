@@ -28,8 +28,8 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
         tag(b","),
         map_opt(separated_pair(digit1, tag(b"-"), digit1), map_range),
     )(file)
-    .map_err(move |_: Err<Error<_>>| anyhow!("Parser failed"))
-    .map(move |t| t.1)
+    .map_err(|_: Err<Error<_>>| anyhow!("Parser failed"))
+    .map(|t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u64 {

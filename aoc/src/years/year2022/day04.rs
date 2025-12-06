@@ -37,8 +37,8 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
             parse_range_unsigned(tag(b"-")),
         ),
     )(file)
-    .map_err(move |_| anyhow!("Parser failed"))
-    .map(move |t| t.1)
+    .map_err(|_| anyhow!("Parser failed"))
+    .map(|t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {

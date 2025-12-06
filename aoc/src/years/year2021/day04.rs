@@ -80,7 +80,7 @@ impl std::ops::IndexMut<[usize; 2]> for BingoBoard {
 
 pub fn parse_input(file: &[u8]) -> Result<SolverInput> {
     let (rest, draws) = separated_list1(tag(b","), parse_unsigned)(file)
-        .map_err(move |_| anyhow!("Failed parsing the drawn numbers list"))?;
+        .map_err(|_| anyhow!("Failed parsing the drawn numbers list"))?;
 
     let mut boards = vec![];
     let mut cells = vec![];

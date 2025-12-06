@@ -8,6 +8,14 @@ pub trait Intersect<Rhs: ?Sized = Self>: Sized {
     fn intersect_with(&self, other: &Rhs) -> Option<Self::Output>;
 }
 
+pub trait Union<Rhs: ?Sized = Self>: Sized {
+    // associated type defaults are unstable
+    // see issue #29661 <https://github.com/rust-lang/rust/issues/29661>
+    type Output; // = Self;
+
+    fn union_with(&self, other: &Rhs) -> Self::Output;
+}
+
 // Derived impl for slices of intersectable types
 // Returns an Some of Vec of results of all intersections (including None's) or None if there aren't any
 impl<T, U> Intersect<[U]> for T
@@ -39,6 +47,23 @@ where
         } else {
             let start = *self.start().max(other.start());
             let end = *self.end().min(other.end());
+            Some(start..=end)
+        }
+    }
+}
+
+impl<Idx> Union for RangeInclusive<Idx>
+where
+    Idx: Ord + Copy,
+{
+    type Output = Option<Self>;
+
+    fn union_with(&self, other: &Self) -> Self::Output {
+        if self.start() > other.end() || other.start() > self.end() {
+            None
+        } else {
+            let start = *self.start().min(other.start());
+            let end = *self.end().max(other.end());
             Some(start..=end)
         }
     }

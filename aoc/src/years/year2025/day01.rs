@@ -17,8 +17,8 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
         _ => None,
     };
     separated_list1(tag("\n"), pair(map_opt(anychar, map_lr), parse_unsigned))(file)
-        .map_err(move |_| anyhow!("Parser failed"))
-        .map(move |t| t.1)
+        .map_err(|_| anyhow!("Parser failed"))
+        .map(|t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {

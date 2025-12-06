@@ -14,8 +14,8 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
             .map(|(rest, calories)| (rest, calories.iter().sum()))
     };
     separated_list1(tag("\n\n"), parse_elf)(file)
-        .map_err(move |_| anyhow!("Parser failed"))
-        .map(move |t| t.1)
+        .map_err(|_| anyhow!("Parser failed"))
+        .map(|t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {

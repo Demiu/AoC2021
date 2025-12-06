@@ -8,8 +8,8 @@ type SolverInput<'a> = [&'a [u8]];
 
 pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
     separated_list1(tag("\n"), digit1)(file)
-        .map_err(move |_: nom::Err<Error<_>>| anyhow!("Parser failed"))
-        .map(move |t| t.1)
+        .map_err(|_: nom::Err<Error<_>>| anyhow!("Parser failed"))
+        .map(|t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> u32 {

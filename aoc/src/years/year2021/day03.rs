@@ -15,8 +15,8 @@ pub fn parse_input<'a>(file: &'a [u8]) -> Result<SolverInput<'a>> {
         .take_while(move |c| *c == b'1' || *c == b'0')
         .count();
     separated_list1(tag("\n"), digit1::<_, nom::error::Error<_>>)(file)
-        .map_err(move |_| anyhow!("Line parser failed"))
-        .map(move |t| {
+        .map_err(|_| anyhow!("Line parser failed"))
+        .map(|t| {
             let mut lines: Vec<(&[u8], u32)> =
                 t.1.into_iter()
                     .map(|line| {

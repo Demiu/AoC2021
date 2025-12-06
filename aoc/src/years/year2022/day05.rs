@@ -52,8 +52,8 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput> {
         |lines| lines.into_iter().map(|t| (t.1, t.3 - 1, t.5 - 1)).collect(),
     );
     separated_pair(parse_stacks, parse_extra_inbetween, parse_instructions)(file)
-        .map_err(move |_| anyhow!("Parser failed"))
-        .map(move |t| t.1)
+        .map_err(|_| anyhow!("Parser failed"))
+        .map(|t| t.1)
 }
 
 pub fn solve_part1(input: &SolverInput) -> String {

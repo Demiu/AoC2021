@@ -1,5 +1,5 @@
 use anyhow::{Context, Result, anyhow};
-use ndarray::{Array2, ArrayView2, s};
+use ndarray::{Array2, ArrayView2, Zip, s};
 use nom::{
     Err, IResult,
     bytes::complete::tag,
@@ -43,9 +43,11 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
     let mut array = input.clone();
     let mut removed = 0;
     loop {
-        let to_remove: Vec<_> = array
-            .indexed_iter()
-            .filter_map(|(coord, &v)| can_be_removed(array.view(), coord, v).then_some(coord))
+        let to_remove: Vec<_> = Zip::indexed(array.view())
+            .par_map_collect(|coord, &v| can_be_removed(array.view(), coord, v).then_some(coord))
+            .iter()
+            .copied()
+            .flatten()
             .collect();
         if to_remove.is_empty() {
             break removed;
