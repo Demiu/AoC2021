@@ -323,7 +323,7 @@ where
     None
 }
 
-fn par_find_first_z_zero<'a, 'b, I: 'a>(instructions: &[Instruction], inputs: I) -> Option<i64>
+fn par_find_first_z_zero<'a, 'b, I>(instructions: &[Instruction], inputs: I) -> Option<i64>
 where
     I: IntoIterator<Item = &'b i64>
         + IntoParallelIterator<Item = &'b i64>

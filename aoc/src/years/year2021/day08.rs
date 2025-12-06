@@ -85,7 +85,7 @@ fn resolve_conflict(
     }
 }
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<ParserOutput<'a>> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
     fn parse_character_sequences(input: &[u8]) -> IResult<&[u8], Vec<&[u8]>> {
         separated_list1(tag(b" "), alpha1)(input)
     }

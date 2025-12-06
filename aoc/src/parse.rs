@@ -18,21 +18,21 @@ pub fn ascii_digit_to_value(character: u8) -> Option<u8> {
     })
 }
 
-fn parse_unsigned_radix<U>(input: &[u8], radix: u8) -> Option<U>
+pub fn parse_unsigned_radix<'a, I, U>(input: I, radix: u8) -> Option<U>
 where
+    I: IntoIterator<Item = &'a u8>,
     U: AddAssign<U> + MulAssign<U> + From<u8>,
 {
-    let mut index = 0;
     let mut number = 0.into();
-    while let Some(value) = input.get(index).copied().and_then(ascii_digit_to_value) {
+    for ch in input.into_iter().copied() {
+        let value = ascii_digit_to_value(ch)?;
         if value >= radix {
             return None;
         }
         number *= radix.into();
         number += value.into();
-        index += 1;
     }
-    if index == 0 { None } else { Some(number) }
+    Some(number)
 }
 
 pub fn unsigned_parser_radix<'a, U, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], U, E>
@@ -63,7 +63,6 @@ where
     }
 }
 
-#[allow(dead_code)]
 pub fn signed_parser_radix<'a, I, E>(radix: u8) -> impl FnMut(&'a [u8]) -> IResult<&'a [u8], I, E>
 where
     E: ParseError<&'a [u8]>,
@@ -92,7 +91,6 @@ where
     }
 }
 
-#[allow(dead_code)]
 pub fn parse_signed<I>(input: &[u8]) -> IResult<&[u8], I>
 where
     I: AddAssign<I> + MulAssign<I> + Mul<I, Output = I> + From<u8> + Neg<Output = I>,

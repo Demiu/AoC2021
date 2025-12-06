@@ -13,7 +13,7 @@ fn ascii_to_priority(c: u8) -> Option<i32> {
     }
 }
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<ParserOutput<'a>> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
     Ok(file
         .split(|c| *c == b'\n')
         .filter(|line| !line.is_empty())

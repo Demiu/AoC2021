@@ -7,7 +7,7 @@ use nom::{bytes::complete::tag, character::complete::digit1, multi::separated_li
 type ParserOutput<'a> = Vec<&'a [u8]>;
 type SolverInput<'a> = [&'a [u8]];
 
-pub fn parse_input<'a>(file: &'a [u8]) -> Result<ParserOutput<'a>> {
+pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
     separated_list1::<_, _, _, nom::error::Error<_>, _, _>(tag(b"\n"), digit1)(file)
         .map_err(|_| anyhow::anyhow!("Failed parsing lines"))
         .map(|t| t.1)

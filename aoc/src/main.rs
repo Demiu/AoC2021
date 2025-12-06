@@ -1,3 +1,4 @@
+use chrono::Datelike;
 use proc::run_year;
 
 mod parse;
@@ -5,7 +6,10 @@ mod traits;
 mod years;
 
 fn main() {
-    //run_year!(2021, 25);
-    //run_year!(2022, 05);
-    run_year!(2025, 01);
+    match chrono::Local::now().year() {
+        2021 => run_year!(2021, 25),
+        2022 => run_year!(2022, 05),
+        2025 => run_year!(2025, 02),
+        _ => println!("Either AoC didn't start this year or you're lazy"),
+    }
 }

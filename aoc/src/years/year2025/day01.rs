@@ -1,10 +1,7 @@
 use anyhow::{Result, anyhow};
 use nom::{
-    bytes::complete::tag,
-    character::complete::anychar,
-    combinator::map_opt,
-    multi::separated_list1,
-    sequence::pair,
+    bytes::complete::tag, character::complete::anychar, combinator::map_opt,
+    multi::separated_list1, sequence::pair,
 };
 
 use crate::parse::parse_unsigned;
@@ -28,9 +25,9 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
     input
         .iter()
         .fold((50i32, 0), |(acc, cnt), rot| {
-            let new = match rot {
-                &(true, deg) => acc + deg,
-                &(false, deg) => acc - deg,
+            let new = match *rot {
+                (true, deg) => acc + deg,
+                (false, deg) => acc - deg,
             };
 
             (new, cnt + (new % 100 == 0) as u32)
@@ -52,7 +49,7 @@ pub fn solve_part2(input: &SolverInput) -> u32 {
             if new < 0 {
                 new += 100;
                 if acc != 0 {
-                    cycles = cycles + 1;
+                    cycles += 1;
                 }
             } else if !dir && new == 0 {
                 cycles += 1;
