@@ -1,9 +1,6 @@
 use anyhow::{Result, anyhow};
 use nom::{
-    bytes::complete::tag,
-    character::complete::digit1,
-    error::Error,
-    multi::separated_list1,
+    bytes::complete::tag, character::complete::digit1, error::Error, multi::separated_list1,
 };
 
 type ParserOutput<'a> = Vec<&'a [u8]>;
