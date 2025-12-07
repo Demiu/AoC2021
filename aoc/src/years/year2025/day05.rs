@@ -57,7 +57,8 @@ pub fn solve_part1(input: &SolverInput) -> usize {
 }
 
 pub fn solve_part2(input: &SolverInput) -> u64 {
-    input.0
+    input
+        .0
         .iter()
         .cloned()
         .map(RangeInclusive::into_inner)
@@ -81,10 +82,7 @@ mod test {
         let parsed = rules::parse_expect!(EXAMPLE, "example");
         assert_eq!(
             parsed,
-            (
-                [3..=5, 10..=20,].into(),
-                [1, 5, 8, 11, 17, 32].into()
-            )
+            ([3..=5, 10..=20,].into(), [1, 5, 8, 11, 17, 32].into())
         );
     }
 
