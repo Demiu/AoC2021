@@ -23,7 +23,6 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
         tag(b"\n"),
         many1(recognize(pair(is_a([ADD_SIGN, MUL_SIGN]), space1))),
     )(file)
-    .inspect_err(|e| panic!("{e}"))
     .map_err(|_: Err<Error<_>>| anyhow!("Failed parsing cells"))?
     .1;
 
@@ -35,7 +34,8 @@ pub fn parse_input(file: &[u8]) -> Result<ParserOutput<'_>> {
         for row in &rows_raw {
             nums.push(&row[xoff..(xoff + len)]);
         }
-        let sign = *op.first()
+        let sign = *op
+            .first()
             .expect("At least one element guaranteed by parsers");
         out.push((sign, nums));
         xoff += len;
@@ -48,9 +48,9 @@ pub fn solve_part1(input: &SolverInput) -> u64 {
     input
         .iter()
         .map(|(op, col)| {
-            let num_it = col.iter().map(|&arr| {
-                parse_unsigned_radix::<_, u64>(arr.iter().filter(|&&c| c != b' '), 10)
-            });
+            let num_it = col
+                .iter()
+                .map(|&arr| parse_unsigned_radix::<_, u64>(arr.iter().filter(|&&c| c != b' '), 10));
             match *op {
                 ADD_SIGN => num_it.sum::<Option<u64>>(),
                 MUL_SIGN => num_it.product(),
