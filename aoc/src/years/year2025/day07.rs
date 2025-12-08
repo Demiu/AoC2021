@@ -54,7 +54,7 @@ pub fn solve_part1(input: &SolverInput) -> u32 {
             std::mem::swap(&mut state, &mut new);
             splits
         })
-        .sum::<u32>()
+        .sum()
 }
 
 pub fn solve_part2(input: &SolverInput) -> u64 {
