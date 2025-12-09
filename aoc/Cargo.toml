@@ -12,6 +12,7 @@ chrono = "0.4"
 concat-with = "0.2"
 ndarray = { version="0.17", features=["rayon"] }
 nom = "7"
+num="0.4"
 itertools = "0.10"
 paste = "1.0"
 priority-queue = "1.2"

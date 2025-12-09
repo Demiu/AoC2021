@@ -1,4 +1,6 @@
-use std::ops::RangeInclusive;
+use std::ops::{Range, RangeInclusive, Sub};
+
+use num::One;
 
 pub trait Intersect<Rhs: ?Sized = Self>: Sized {
     // associated type defaults are unstable
@@ -49,6 +51,20 @@ where
             let end = *self.end().min(other.end());
             Some(start..=end)
         }
+    }
+}
+
+impl<Idx> Intersect<Range<Idx>> for RangeInclusive<Idx>
+where
+    Idx: Ord + Copy + One + Sub<Output = Idx>,
+{
+    type Output = Self;
+
+    fn intersect_with(&self, other: &Range<Idx>) -> Option<Self::Output> {
+        let start = *self.start().max(&other.start);
+        let end = *self.end().min(&(other.end - Idx::one()));
+        let range = start..=end;
+        if range.is_empty() { None } else { Some(range) }
     }
 }
 

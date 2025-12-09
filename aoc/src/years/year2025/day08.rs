@@ -33,6 +33,12 @@ pub fn solve_part1(input: &SolverInput) -> usize {
     solve_gen(input, after1k).0
 }
 
+pub fn solve_part2(input: &SolverInput) -> u64 {
+    let one_group = |_, groups: &[BTreeSet<_>]| groups.len() == 1 && groups[0].len() == input.len();
+    let (last_a, last_b) = solve_gen(input, one_group).1;
+    input[last_a].0 * input[last_b].0
+}
+
 fn solve_gen<F>(input: &SolverInput, term_cond: F) -> (usize, (usize, usize))
 where
     F: Fn(usize, &[BTreeSet<usize>]) -> bool,
@@ -96,12 +102,6 @@ where
     groups.sort_by_key(|v| Reverse(v.len()));
     let p1 = groups.into_iter().map(|v| v.len()).take(3).product();
     (p1, p2)
-}
-
-pub fn solve_part2(input: &SolverInput) -> u64 {
-    let one_group = |_, groups: &[BTreeSet<_>]| groups.len() == 1 && groups[0].len() == input.len();
-    let (last_a, last_b) = solve_gen(input, one_group).1;
-    input[last_a].0 * input[last_b].0
 }
 
 impl PartialEq for DistIndicies {
